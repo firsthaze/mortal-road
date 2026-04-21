@@ -1,0 +1,361 @@
+{
+  "acts": {
+    "act1": ["act1_market", "act1_temple", "act1_road"],
+    "act2": ["act2_inn", "act2_ambush", "act2_merchant"],
+    "act3": ["act3_mountain", "act3_ruins"]
+  },
+  "nodes": {
+
+    "start": {
+      "type": "story",
+      "title": "序章・浮世行",
+      "text": "這世道，從來都不太平。你踏上了一段不知盡頭的旅途。",
+      "class_text": {
+        "beggar": "深秋的午後，你蜷縮在城牆根下，一碗殘稀粥早已見底。忽然一名錦衣老者路過，將一塊溫熱的玉牌塞入你手，低語：「去尋它，你會得到一切。」轉眼人已不見。手中玉牌溫熱，似有什麼在召喚你。你拍了拍空空的腰間，起身，踏出了這條你住了三年的牆根。",
+        "courtesan": "鶯歌燕舞聲中，你攤開那封藏在花籃底部的密信。寥寥數語，卻讓你心頭一緊——信中的人知道你不為人知的過去，也知道那件埋藏多年的舊事。你放下胭脂，摘去耳墜，換了一身便裝。有些事，若不親自去，恐怕永遠得不到答案。",
+        "constable": "衙門一道急令，搜捕要犯，限期三日。你接過文書，仔細看了看畫像——那雙眼睛，你認識。案子背後藏著什麼，你不確定；但你知道，這一去，恐怕不只是公差這麼簡單。你拍了拍腰間的捕刀，踏出衙門大門。",
+        "taoist": "師傅深夜喚你入密室，將一卷古籍與一枚殘破的玉符交予你。「山下有一股邪氣集聚，非你不可。」他的眼中有你從未見過的憂色。你沉默地接過，下山時，天色已將破曉。山霧瀰漫，前路不明，而你的心，出奇地平靜。"
+      },
+      "choices": [
+        {"text": "踏上征途", "next": "__act1__"}
+      ]
+    },
+
+    "act1_market": {
+      "type": "story",
+      "title": "第一章・菜市口風波",
+      "text": "趕路途中，你路過一座喧鬧的市集。忽然前方大亂——一名醉漢踉蹌橫衝，打翻了好幾攤貨物，小販哀嚎，行人走避。醉漢血紅的雙眼鎖上了你，嗤笑一聲：「你這外鄉人，看什麼看！」",
+      "choices": [
+        {"text": "不廢話，先打再說", "next": "act1_market_fight"},
+        {"text": "好言相勸，試圖化解", "next": "act1_market_pacify", "condition": {"stat": "social", "min": 15}},
+        {"text": "繞道，懶得理會這種人", "next": "act1_shortcut"}
+      ]
+    },
+
+    "act1_market_fight": {
+      "type": "combat",
+      "combat_id": "drunk",
+      "next_win": "act1_reward",
+      "next_escape": "act1_shortcut",
+      "history_flag": "fought_drunk"
+    },
+
+    "act1_market_pacify": {
+      "type": "story",
+      "title": "以和為貴",
+      "text": "你笑著上前，不慌不忙說了幾句好話。醉漢愣了愣，火氣竟消了一半，罵罵咧咧地拂袖而去。圍觀的小販感激涕零，塞給你一個沉甸甸的小布袋：「恩人，這是我們的一點心意，收著吧。」",
+      "history_flag": "pacified_drunk",
+      "choices": [
+        {"text": "接過謝禮，繼續趕路", "next": "act1_reward"}
+      ]
+    },
+
+    "act1_shortcut": {
+      "type": "story",
+      "title": "另覓他途",
+      "text": "你悄悄繞開了那場麻煩，少了一場廝打，倒也清靜。只是總覺得少了些什麼——那種讓血液沸騰的感覺。算了，前路還長。",
+      "choices": [
+        {"text": "繼續趕路", "next": "__act2__"}
+      ]
+    },
+
+    "act1_temple": {
+      "type": "story",
+      "title": "第一章・荒廟夜宿",
+      "text": "夜幕低垂，四野荒涼。你尋到一座廢棄的山神廟勉強避風。廟中卻有一盞孤燈未熄，燈旁坐著一名鬚髮皆白的老道士，對你的闖入渾若未覺，只是低聲吟誦著什麼。",
+      "choices": [
+        {"text": "上前請教", "next": "act1_temple_ask"},
+        {"text": "自行歇腳，不去打擾", "next": "act1_temple_rest"},
+        {"text": "趁老者入定，翻看案上典籍", "next": "act1_temple_steal", "condition": {"stat": "luck", "min": 20}}
+      ]
+    },
+
+    "act1_temple_ask": {
+      "type": "story",
+      "title": "道緣",
+      "text": "老道士半晌後才緩緩睜眼，深深看了你一眼，點頭道：「有緣。」他從懷中掏出一件東西，放在你掌中——",
+      "class_text": {
+        "beggar": "老道士半晌後才緩緩睜眼，深深看了你一眼，點頭道：「有緣。」他遞來一包金創藥，還有半本殘缺的武功心法。「你身上有股旺盛的生氣，好好保存。」他說罷，閉目如初，不再言語。",
+        "courtesan": "老道士半晌後才緩緩睜眼，深深看了你一眼，點頭道：「有緣。」他遞來一面小銅鏡。「此物能照人心，遇敵時心念一動，便知對方弱點所在。」他說罷，閉目如初，不再言語。",
+        "constable": "老道士半晌後才緩緩睜眼，深深看了你一眼，點頭道：「有緣。」他遞來一枚刻有「天罰」二字的令牌。「你我皆是奉命行事。此令，可助你一臂之力。」他說罷，閉目如初，不再言語。",
+        "taoist": "老道士半晌後才緩緩睜眼，與你對視片刻，忽然笑了：「師出同門，緣分不淺啊。」他從懷中取出一枚符文銅錢，放在你掌中。「前路兇險，這個，你比我更需要。願它護你周全。」"
+      },
+      "history_flag": "met_temple_elder",
+      "choices": [
+        {"text": "謝過道長，起身告辭", "next": "act1_reward"}
+      ]
+    },
+
+    "act1_temple_rest": {
+      "type": "event",
+      "title": "靜夜小憩",
+      "text": "你在廟角找了個乾淨的地方躺下，老道士也不理你，自顧打坐。寒夜裡，廟中竟有幾分溫意。你睡得意外地熟，一覺醒來精神煥發，連昨日的傷痛也淡了幾分。",
+      "event_type": "heal",
+      "heal_pct": 30,
+      "next": "__act2__"
+    },
+
+    "act1_temple_steal": {
+      "type": "story",
+      "title": "偷師",
+      "text": "老者入定後，你小心翼翼地展開那本泛黃的典籍。文字晦澀難懂，你似懂非懂，卻隱約感覺有什麼東西在腦中紮根。也許是天份，也許是際遇，總之今夜你有所得。",
+      "history_flag": "stole_knowledge",
+      "choices": [
+        {"text": "合上典籍，繼續趕路", "next": "act1_reward"}
+      ]
+    },
+
+    "act1_road": {
+      "type": "story",
+      "title": "第一章・山道奇遇",
+      "text": "山路蜿蜒，行人稀少。你忽然看見路邊倒著一名衣衫凌亂的旅人，胸前帶傷，呼吸急促。他見到你，艱難地抬起頭：「求……求你，我有要事……有人追殺我……」話音未落，四周灌木叢中現出三道黑影，手中各持利刃。",
+      "choices": [
+        {"text": "幫他！擋住追兵", "next": "act1_road_fight"},
+        {"text": "先問清楚再說", "next": "act1_road_question"},
+        {"text": "多一事不如少一事，轉身離開", "next": "act1_shortcut"}
+      ]
+    },
+
+    "act1_road_fight": {
+      "type": "combat",
+      "combat_id": "bandit",
+      "next_win": "act1_road_rescued",
+      "next_escape": "act1_shortcut",
+      "history_flag": "fought_road_bandits"
+    },
+
+    "act1_road_rescued": {
+      "type": "story",
+      "title": "俠義之心",
+      "text": "山賊落荒而逃。旅人掙扎著坐起，望著你的眼神充滿感激。他從懷中摸出一個布包，顫抖著雙手塞給你：「這是我的家傳之物，今日若不是你，性命不保。你收著，算是我的謝禮，也是我的心意。」",
+      "history_flag": "saved_traveler",
+      "choices": [
+        {"text": "道謝，收下布包，繼續趕路", "next": "act1_reward"}
+      ]
+    },
+
+    "act1_road_question": {
+      "type": "story",
+      "title": "問清來龍去脈",
+      "text": "旅人焦急地環顧四周，壓低聲音告訴你，他攜有一份關鍵文書，牽涉到近日江湖動盪的幕後黑手。就在你們交談之際，追兵的腳步聲已近在咫尺。不管如何，你必須做個決定。",
+      "class_text": {
+        "constable": "旅人焦急地環顧四周，壓低聲音告訴你，他攜有一份關鍵文書，牽涉到近日江湖動盪的幕後黑手。你眼神一凜——這份文書，正是上司讓你尋找的線索。你當機立斷，亮出腰牌：「官府辦案，山賊退開！」追兵一愣，但仍蜂擁而上。",
+        "taoist": "旅人焦急地環顧四周，壓低聲音告訴你，他攜有一份關鍵文書，牽涉到近日江湖動盪的幕後黑手。你閉目感應片刻，感覺到他身上有一股奇特的靈氣波動——他攜帶的，恐怕不是普通文書。不管如何，此人值得相救。"
+      },
+      "history_flag": "learned_road_secret",
+      "choices": [
+        {"text": "決定出手相助", "next": "act1_road_fight"}
+      ]
+    },
+
+    "act1_reward": {
+      "type": "event",
+      "title": "意外收穫",
+      "text": "在這段際遇中，你有所得著。一件新的本事在你心中成形——從中選擇一張牌，加入你的牌庫：",
+      "event_type": "card_reward",
+      "card_pool": ["iron_will", "cursed_blade", "divine_luck", "soul_bind", "spirit_burst", "phantom_blade"],
+      "pick_from": 3,
+      "next": "__act2__"
+    },
+
+    "act2_inn": {
+      "type": "story",
+      "title": "第二章・客棧夜話",
+      "text": "夜宿一家路邊客棧，大堂燈火昏黃。幾個過路商旅低聲議論——近日山中出了邪法師，各方勢力都在打他的主意。就在這時，一名黑袍人從鄰座起身，掃了你一眼，眼神不善，慢慢向門口走去。",
+      "choices": [
+        {"text": "起身，直接追問對方", "next": "act2_inn_confront"},
+        {"text": "以酒相邀，套取情報", "next": "act2_inn_social", "condition": {"stat": "social", "min": 20}},
+        {"text": "默默記下，謹慎行事", "next": "act2_crossroads"}
+      ]
+    },
+
+    "act2_inn_confront": {
+      "type": "combat",
+      "combat_id": "guard",
+      "next_win": "act2_inn_win",
+      "next_escape": "act2_crossroads",
+      "history_flag": "fought_inn_agent"
+    },
+
+    "act2_inn_win": {
+      "type": "story",
+      "title": "水落石出",
+      "text": "黑袍人倒地，一份密函從他衣袖滑落。你展開一看，豁然開朗——對手的老巢，就在前方的廢墟之中。你輕輕將密函折好，收入懷中。",
+      "history_flag": "found_enemy_hideout",
+      "choices": [
+        {"text": "收好密函，繼續前行", "next": "act2_crossroads"}
+      ]
+    },
+
+    "act2_inn_social": {
+      "type": "story",
+      "title": "觥籌交錯",
+      "text": "幾杯酒下去，黑袍人的話漸漸多了起來。他說漏了嘴，透露了邪術師的虛實，還提到了一條鮮有人知的捷徑。你面帶微笑，心中已將這些情報一一記下。",
+      "history_flag": "charmed_intel",
+      "choices": [
+        {"text": "告辭，事不宜遲", "next": "act2_crossroads"}
+      ]
+    },
+
+    "act2_ambush": {
+      "type": "story",
+      "title": "第二章・林中殺機",
+      "text": "穿越一段密林時，你察覺到異樣——樹梢有人，草叢有人，四面都是人。一名戴斗笠的山賊從樹後走出，冷冷道：「識相的，把東西留下。」",
+      "choices": [
+        {"text": "正面迎戰，殺出一條路", "next": "act2_ambush_fight"},
+        {"text": "聲東擊西，趁亂脫身", "next": "act2_ambush_escape", "condition": {"stat": "luck", "min": 28}},
+        {"text": "亮出氣勢，強行震懾", "next": "act2_ambush_bluff"}
+      ]
+    },
+
+    "act2_ambush_fight": {
+      "type": "combat",
+      "combat_id": "bandit",
+      "next_win": "act2_ambush_win",
+      "next_escape": "act2_crossroads",
+      "history_flag": "fought_ambush"
+    },
+
+    "act2_ambush_win": {
+      "type": "story",
+      "title": "以一當眾",
+      "text": "山賊四散，頭目狼狽逃竄。你稍作喘息，忽然發現地上有個破舊的包袱——這應是他們劫來的財物，其中夾著幾本殘缺的秘笈，字跡潦草卻頗有門道。",
+      "history_flag": "defeated_ambush",
+      "choices": [
+        {"text": "翻撿一番，繼續趕路", "next": "act2_crossroads"}
+      ]
+    },
+
+    "act2_ambush_escape": {
+      "type": "event",
+      "title": "虛晃一招",
+      "text": "你拋出一物製造聲響，趁伏兵錯愕的瞬間，一口氣衝出了包圍圈。跑出一段路後，你扶著樹幹大口喘氣——今日算是命大。略作調息，傷勢稍減。",
+      "event_type": "heal",
+      "heal_pct": 10,
+      "next": "act2_crossroads"
+    },
+
+    "act2_ambush_bluff": {
+      "type": "story",
+      "title": "虎威",
+      "text": "你環顧四周，朗聲道：「識相的，給我讓路。」山賊們面面相覷，沒想到你這麼淡定。就在氣氛僵持之際，你趁機大步向前，對方竟真的讓出了一條路——有時候，氣勢就是最強的武器。",
+      "history_flag": "bluffed_ambush",
+      "choices": [
+        {"text": "頭也不回地走過去", "next": "act2_crossroads"}
+      ]
+    },
+
+    "act2_merchant": {
+      "type": "story",
+      "title": "第二章・神秘商人",
+      "text": "荒郊野嶺，偏偏有一座精緻的攤位。一名面目模糊的老者坐在攤後，攤上擺著各式奇珍異物，光澤不尋常。他抬眼看了你一下，笑道：「緣分，緣分啊。你需要的，老夫這裡都有。」",
+      "choices": [
+        {"text": "詢問攤上的物品（代價：損失15%生命）", "next": "act2_merchant_browse"},
+        {"text": "以靈力探查其來歷", "next": "act2_merchant_spirit", "condition": {"stat": "spirit", "min": 18}},
+        {"text": "買賣不成仁義在，告辭", "next": "act2_crossroads"}
+      ]
+    },
+
+    "act2_merchant_browse": {
+      "type": "event",
+      "title": "以傷換寶",
+      "text": "商人從攤上拿起三件物品，一一展示。「各有奇效，各取所需。不過老夫的規矩——以傷換寶。」他說完，攤開手。你咬牙，伸出手，一道奇異的力量抽走了你部分元氣。",
+      "event_type": "card_reward_cost",
+      "cost_hp_pct": 15,
+      "card_pool": ["iron_will", "cursed_blade", "divine_luck", "soul_bind", "spirit_burst", "phantom_blade"],
+      "pick_from": 3,
+      "next": "act2_crossroads"
+    },
+
+    "act2_merchant_spirit": {
+      "type": "story",
+      "title": "看穿幻象",
+      "text": "你靈力微動，眼前的「老者」身形一晃——那是一道縈繞著淡淡靈光的虛影，真身不在此地。他哈哈大笑：「好眼力！千百年來，能看破老夫幻象的，不超過十個人。既然如此，這件東西算是送你的。」",
+      "history_flag": "saw_through_merchant",
+      "choices": [
+        {"text": "接過禮物，繼續趕路", "next": "act2_merchant_free"}
+      ]
+    },
+
+    "act2_merchant_free": {
+      "type": "event",
+      "title": "無償饋贈",
+      "text": "虛影遞來一件閃著靈光的物品，放入你手中後悄然消散，只留下一陣清風。",
+      "event_type": "card_reward",
+      "card_pool": ["spirit_burst", "soul_bind", "divine_luck", "phantom_blade"],
+      "pick_from": 3,
+      "next": "act2_crossroads"
+    },
+
+    "act2_crossroads": {
+      "type": "story",
+      "title": "十字路口",
+      "text": "你駐足在三岔路口。前方通向目的地，但據你所知，那裡可能比想象中危險得多。路旁有個老農正在收割，見你停步，招招手：「後生，這條路不好走啊。山上的事，不是一般人能插手的。」",
+      "class_text": {
+        "taoist": "你駐足在三岔路口，掐指一算，卦象不明。前方通向目的地，山上邪氣彌漫——但你的師命在此，退路早已斷絕。路旁有個老農見你停步，搖頭道：「後生，這條路不好走啊。」你笑了笑：「走過才知道。」",
+        "beggar": "你駐足在三岔路口，拍了拍空空的口袋。前方或許有危險，但也或許有機遇——你這一輩子，走的都是這種路。路旁有個老農見你停步，歎了口氣：「後生，那條路不好走啊。」你聳了聳肩：「哪條路好走過？」",
+        "constable": "你駐足在三岔路口，拿出文書看了看。前方就是目標所在，退縮不是捕快的作風。路旁有個老農見你停步，嘀咕道：「連官差都來了，這回是真的大事。」你整了整腰牌，邁步向前。",
+        "courtesan": "你駐足在三岔路口，輕撫著袖中那封密信。前方的答案就在那裡，這趟路你無論如何都要走完。路旁有個老農見你停步，吃驚道：「哎，你這位姑娘，前面可危險哩。」你淡淡一笑：「危險的事，我見得多了。」"
+      },
+      "choices": [
+        {"text": "義無反顧，繼續前行", "next": "__act3__"},
+        {"text": "問清路況，另覓良機", "next": "act2_crossroads_alt", "condition": {"stat": "social", "min": 10}},
+        {"text": "此行兇多吉少，暫且退步", "next": "ending_escape", "history_flag": "chose_escape"}
+      ]
+    },
+
+    "act2_crossroads_alt": {
+      "type": "story",
+      "title": "另闢蹊徑",
+      "text": "老農告訴你，確實有條山間小路可以繞到目的地背後，避開正面的守衛。「只是那條路上……有時候會有些奇怪的東西出沒。」他說完，便不再開口了。你思量片刻，做出選擇。",
+      "choices": [
+        {"text": "走山間小路，出奇制勝", "next": "act3_ruins"},
+        {"text": "還是走正路，堂堂正正", "next": "act3_mountain"}
+      ]
+    },
+
+    "act3_mountain": {
+      "type": "combat",
+      "title": "第三章・絕頂對決",
+      "combat_id": "sorcerer",
+      "next_win": "__ending__",
+      "next_escape": "ending_escape",
+      "history_flag": "faced_sorcerer_front"
+    },
+
+    "act3_ruins": {
+      "type": "combat",
+      "title": "第三章・廢墟之戰",
+      "combat_id": "guard",
+      "next_win": "__ending__",
+      "next_escape": "ending_escape",
+      "history_flag": "fought_ruins_guard"
+    },
+
+    "ending_glory": {
+      "type": "ending",
+      "title": "名揚天下"
+    },
+    "ending_immortal": {
+      "type": "ending",
+      "title": "羽化登仙"
+    },
+    "ending_survivor": {
+      "type": "ending",
+      "title": "功成身退"
+    },
+    "ending_sacrifice": {
+      "type": "ending",
+      "title": "英雄犧牲"
+    },
+    "ending_escape": {
+      "type": "ending",
+      "title": "浪跡天涯"
+    },
+    "ending_underdog": {
+      "type": "ending",
+      "title": "絕地翻盤"
+    }
+
+  }
+}
