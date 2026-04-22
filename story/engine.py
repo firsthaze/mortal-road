@@ -119,8 +119,9 @@ class StoryEngine:
     def _handle_story(self, node: StoryNode) -> str:
         _banner(node.title)
 
-        # 主文字
+        # 主文字（替換 {name} 為旅者姓名）
         text = node.class_text.get(self.character.char_key, node.text)
+        text = text.replace("{name}", self.character.traveler_name)
         _typewrite(f"\n  {text.replace(chr(10), chr(10) + '  ')}\n")
         _pause(0.3)
 
@@ -225,7 +226,8 @@ class StoryEngine:
 
     def _handle_event(self, node: StoryNode) -> str:
         _banner(node.title)
-        _typewrite(f"\n  {node.text}\n")
+        event_text = node.text.replace("{name}", self.character.traveler_name)
+        _typewrite(f"\n  {event_text}\n")
 
         et = node.event_type
 

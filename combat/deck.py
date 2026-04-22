@@ -68,6 +68,11 @@ class Deck:
 
     # ── 顯示輔助 ──────────────────────────────────────────────
 
+    _STATUS_TAG = {
+        "stun": "暈眩", "fear": "恐懼", "curse": "詛咒",
+        "burn": "燃燒", "evade": "迴避", "duty_bonus": "蓄力",
+    }
+
     def hand_display(self, user=None) -> str:
         if not self.hand:
             return "  手牌：（空）"
@@ -84,11 +89,21 @@ class Deck:
                     if eff.healing > 0:
                         tags.append(f"治癒{eff.healing}")
                     if eff.self_block > 0:
-                        tags.append(f"護盾{eff.self_block}")
+                        tags.append(f"護盾+{eff.self_block}")
                     if eff.self_ward > 0:
-                        tags.append(f"結界{eff.self_ward}")
+                        tags.append(f"結界+{eff.self_ward}")
                     if eff.extra_energy > 0:
                         tags.append(f"能量+{eff.extra_energy}")
+                    if eff.extra_draw > 0:
+                        tags.append(f"抽牌+{eff.extra_draw}")
+                    if eff.instant_win:
+                        tags.append("即決")
+                    for sa in eff.target_statuses:
+                        label = self._STATUS_TAG.get(sa.name, sa.name)
+                        tags.append(f"敵{label}")
+                    for sa in eff.self_statuses:
+                        label = self._STATUS_TAG.get(sa.name, sa.name)
+                        tags.append(f"自{label}")
                     dmg_str = "  ❮" + "·".join(tags) + "❯" if tags else ""
                     lines.append(f"    [{i}] {card.name}（{card.cost}能）{dmg_str}")
                 except Exception:

@@ -72,6 +72,31 @@ def _clear() -> None:
     print("\n" * 3)
 
 
+# ── 效果結果顯示 ──────────────────────────────────────────────
+
+_STATUS_EFFECT_DESC = {
+    "stun":  "暈眩，下回合無法行動",
+    "fear":  "恐懼，攻擊傷害降低25%",
+    "curse": "詛咒，所受傷害增加20%",
+    "burn":  "燃燒，每回合受到真實傷害",
+}
+
+def _damage_result_line(target) -> str:
+    name = getattr(target, "name", "目標")
+    hp = target.current_hp
+    max_hp = target.stats["hp"]
+    shield = target.statuses.get("block", {}).get("value", 0)
+    if shield > 0:
+        return f"  {_C.DIM}→ {name} 生命 {hp}/{max_hp}，護盾剩餘 {shield}{_C.RESET}"
+    return f"  {_C.DIM}→ {name} 生命剩餘 {hp}/{max_hp}{_C.RESET}"
+
+def _status_applied_line(name: str, value: int) -> str:
+    desc = _STATUS_EFFECT_DESC.get(name, name)
+    if name == "burn":
+        return f"  {_C.MAGENTA}→ 施加【{desc}】（每回合 {value} 傷）{_C.RESET}"
+    return f"  {_C.MAGENTA}→ 施加【{desc}】（{value} 回合）{_C.RESET}"
+
+
 # ── 卡牌效果應用 ───────────────────────────────────────────────
 
 def _apply_effect_wrap(effect: CardEffect, user, target, deck: Deck) -> tuple[int, bool, bool]:
@@ -88,25 +113,34 @@ def _apply_effect_wrap(effect: CardEffect, user, target, deck: Deck) -> tuple[in
         _, msgs = target.receive_damage(phys, true_damage=False)
         for m in msgs:
             _typewrite(f"  {m}")
+        _typewrite(_damage_result_line(target))
     if effect.true_damage > 0:
         _, msgs = target.receive_damage(effect.true_damage, true_damage=True)
         for m in msgs:
             _typewrite(f"  {m}")
+        _typewrite(_damage_result_line(target))
     if effect.self_damage > 0:
         user.receive_damage(effect.self_damage, true_damage=True)
         _typewrite(f"  自身受到 {effect.self_damage} 點反傷。")
+        _typewrite(_damage_result_line(user))
     if effect.healing > 0:
         restored = user.heal(effect.healing)
         if restored > 0:
-            _typewrite(f"  {_C.GREEN}恢復 {restored} 點生命。{_C.RESET}")
+            _typewrite(f"  {_C.GREEN}恢復 {restored} 點生命。（生命 {user.current_hp}/{user.stats['hp']}）{_C.RESET}")
     if effect.self_block > 0:
         user.apply_status_raw("block", effect.self_block)
+        total = user.statuses.get("block", {}).get("value", effect.self_block)
+        _typewrite(f"  {_C.CYAN}護盾 {total} 點。{_C.RESET}")
     if effect.self_ward > 0:
         user.apply_status_raw("ward", effect.self_ward)
+        total = user.statuses.get("ward", {}).get("value", effect.self_ward)
+        _typewrite(f"  {_C.CYAN}結界 {total} 點。{_C.RESET}")
     for sa in effect.target_statuses:
         target.apply_status_raw(sa.name, sa.value, sa.extra)
+        _typewrite(_status_applied_line(sa.name, sa.value))
     for sa in effect.self_statuses:
         user.apply_status_raw(sa.name, sa.value, sa.extra)
+        _typewrite(_status_applied_line(sa.name, sa.value))
 
     had_extra_draw = effect.extra_draw > 0
     if had_extra_draw:
@@ -149,7 +183,8 @@ def _render(character, enemy: Enemy, deck: Deck, energy: int, max_energy: int) -
     print("─" * W)
     _p(deck.hand_display(character))
     print("─" * W)
-    _p("  [1-5] 出牌   [e] 結束回合   [r] 逃跑   [s] 查看狀態")
+    hand_max = len(deck.hand)
+    _p(f"  [1-{hand_max}] 出牌   [e] 結束回合   [r] 逃跑   [s] 查看狀態")
     print(_C.BOLD + "═" * W + _C.RESET)
 
 
@@ -280,7 +315,7 @@ class Battle:
             indices: list[int] = []
             valid = True
             for p in parts:
-                if p.isdigit() and 1 <= int(p) <= 5:
+                if p.isdigit() and 1 <= int(p) <= len(self.deck.hand):
                     indices.append(int(p) - 1)
                 else:
                     valid = False
@@ -288,7 +323,7 @@ class Battle:
 
             if valid and indices:
                 first_idx = indices[0]
-                if first_idx >= len(self.deck.hand):
+                if first_idx >= len(self.deck.hand) or first_idx < 0:
                     _typewrite("  無效的選擇。")
                     continue
                 card = self.deck.hand[first_idx]
