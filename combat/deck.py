@@ -81,30 +81,33 @@ class Deck:
             if user is not None:
                 try:
                     eff = card.preview(user)
-                    tags = []
+                    parts = []
                     if eff.damage > 0:
-                        tags.append(f"物傷{eff.damage}")
+                        parts.append(f"對敵人造成物理傷害<{eff.damage}>")
                     if eff.true_damage > 0:
-                        tags.append(f"真傷{eff.true_damage}")
+                        parts.append(f"對敵人造成真實傷害<{eff.true_damage}>")
                     if eff.healing > 0:
-                        tags.append(f"治癒{eff.healing}")
+                        parts.append(f"恢復<{eff.healing}>點生命")
                     if eff.self_block > 0:
-                        tags.append(f"護盾+{eff.self_block}")
+                        parts.append(f"獲得<{eff.self_block}>點護盾")
                     if eff.self_ward > 0:
-                        tags.append(f"結界+{eff.self_ward}")
+                        parts.append(f"獲得<{eff.self_ward}>點結界")
                     if eff.extra_energy > 0:
-                        tags.append(f"能量+{eff.extra_energy}")
+                        parts.append(f"獲得<{eff.extra_energy}>點能量")
                     if eff.extra_draw > 0:
-                        tags.append(f"抽牌+{eff.extra_draw}")
+                        parts.append(f"抽取<{eff.extra_draw}>張牌")
                     if eff.instant_win:
-                        tags.append("即決")
+                        parts.append("即決勝利")
                     for sa in eff.target_statuses:
                         label = self._STATUS_TAG.get(sa.name, sa.name)
-                        tags.append(f"敵{label}")
+                        if sa.name == "burn":
+                            parts.append(f"附帶敵人{label}效果（每回合<{sa.value}>傷）")
+                        else:
+                            parts.append(f"附帶敵人{label}效果<{sa.value}>回合")
                     for sa in eff.self_statuses:
                         label = self._STATUS_TAG.get(sa.name, sa.name)
-                        tags.append(f"自{label}")
-                    dmg_str = "  ❮" + "·".join(tags) + "❯" if tags else ""
+                        parts.append(f"自身獲得{label}<{sa.value}>回合")
+                    dmg_str = "  " + "，".join(parts) if parts else ""
                     lines.append(f"    [{i}] {card.name}（{card.cost}能）{dmg_str}")
                 except Exception:
                     lines.append(f"    [{i}] {card.name}（{card.cost}能）── {card.description}")

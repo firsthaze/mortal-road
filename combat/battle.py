@@ -393,6 +393,7 @@ class Battle:
                 _typewrite(f"  物理攻擊 {action.damage} {suffix}")
                 for m in msgs:
                     _typewrite(f"    {m}")
+                _typewrite(_damage_result_line(self.character))
 
             if action.true_damage > 0:
                 actual, msgs = self.character.receive_damage(
@@ -402,6 +403,7 @@ class Battle:
                 _typewrite(f"  真實傷害 {action.true_damage} {suffix}")
                 for m in msgs:
                     _typewrite(f"    {m}")
+                _typewrite(_damage_result_line(self.character))
 
             if action.self_heal > 0:
                 _typewrite(f"  {_C.YELLOW}【{self.enemy.name}】回復了 {action.self_heal} 點生命！{_C.RESET}")

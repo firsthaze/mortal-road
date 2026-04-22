@@ -6,6 +6,7 @@ from combat import Battle, BattleOutcome, build_enemy
 from combat.card import build_card, ADVANCED_CARD_POOL, CLASS_EVENT_POOL
 from combat.deck import Deck
 from combat.enemy import BOSS_POOL
+from characters.base import STAT_LABELS
 from .graph import StoryGraph
 from .node import StoryNode
 from .endings import ENDINGS, determine_ending
@@ -135,13 +136,7 @@ class StoryEngine:
         # 顯示選項
         _div()
         for i, choice in enumerate(available, 1):
-            cond = choice.condition
-            hint = ""
-            if cond.get("class"):
-                hint = f"（{self.character.name}專屬）"
-            elif cond.get("stat"):
-                hint = f"（需{cond['stat']}≥{cond['min']}）"
-            _p(f"  [{i}] {choice.text}{hint}")
+            _p(f"  [{i}] {choice.text}{self._choice_hint(choice.condition)}")
         _p("  [v] 查看屬性   [d] 查看牌庫")
         _div()
 
@@ -155,13 +150,7 @@ class StoryEngine:
                 _typewrite(f"\n  {text.replace(chr(10), chr(10) + '  ')}\n")
                 _div()
                 for i, choice in enumerate(available, 1):
-                    cond = choice.condition
-                    hint = ""
-                    if cond.get("class"):
-                        hint = f"（{self.character.name}專屬）"
-                    elif cond.get("stat"):
-                        hint = f"（需{cond['stat']}≥{cond['min']}）"
-                    _p(f"  [{i}] {choice.text}{hint}")
+                    _p(f"  [{i}] {choice.text}{self._choice_hint(choice.condition)}")
                 _p("  [v] 查看屬性   [d] 查看牌庫")
                 _div()
                 continue
@@ -178,13 +167,7 @@ class StoryEngine:
                 _typewrite(f"\n  {text.replace(chr(10), chr(10) + '  ')}\n")
                 _div()
                 for i, choice in enumerate(available, 1):
-                    cond = choice.condition
-                    hint = ""
-                    if cond.get("class"):
-                        hint = f"（{self.character.name}專屬）"
-                    elif cond.get("stat"):
-                        hint = f"（需{cond['stat']}≥{cond['min']}）"
-                    _p(f"  [{i}] {choice.text}{hint}")
+                    _p(f"  [{i}] {choice.text}{self._choice_hint(choice.condition)}")
                 _p("  [v] 查看屬性   [d] 查看牌庫")
                 _div()
                 continue
@@ -241,8 +224,9 @@ class StoryEngine:
         elif et in ("card_reward", "card_reward_cost"):
             if et == "card_reward_cost":
                 cost = int(self.character.stats["hp"] * node.cost_hp_pct / 100)
-                actual = self.character.receive_damage(cost, true_damage=True)[0]
-                _p(f"\n  你付出了 {actual} 點生命作為代價。")
+                # 直接扣血，穿透護盾與結界
+                self.character.current_hp = max(0, self.character.current_hp - cost)
+                _p(f"\n  你付出了 {cost} 點生命作為代價。（生命 {self.character.current_hp}/{self.character.stats['hp']}）")
                 _pause(0.5)
                 if not self.character.is_alive():
                     return "__sacrifice__"
@@ -307,3 +291,16 @@ class StoryEngine:
         )
         if cards_str:
             _p(f"  取得進階牌：{cards_str}")
+
+    def _choice_hint(self, cond: dict) -> str:
+        if not cond:
+            return ""
+        if cond.get("class"):
+            return f"（{self.character.name}專屬）"
+        if cond.get("stat"):
+            key = cond["stat"]
+            req = cond["min"]
+            cur = self.character.stat(key)
+            label = STAT_LABELS.get(key, key)
+            return f"（{label}≥{req}，你：{cur}）"
+        return ""
