@@ -29,6 +29,7 @@ class Character:
         self.current_hp = self.stats["hp"]
         self.deck_ids = list(self.base_deck_ids)
         self.statuses: dict[str, dict] = {}
+        self.traveler_name: str = self.name
 
     # ── 狀態系統 ──────────────────────────────────────────────
 
@@ -142,7 +143,7 @@ class Character:
 
     def heal(self, amount: int) -> int:
         before = self.current_hp
-        self.current_hp = min(self.stats["hp"], self.current_hp + amount)
+        self.current_hp = max(0, min(self.stats["hp"], self.current_hp + amount))
         return self.current_hp - before
 
     # ── 查詢 ──────────────────────────────────────────────────
@@ -154,6 +155,25 @@ class Character:
         return self.stats.get(key, 0)
 
     # ── 顯示 ──────────────────────────────────────────────────
+
+    def detail_display(self) -> str:
+        W = 48
+        lines = [
+            "─" * W,
+            f"  旅者：【{self.traveler_name}】  {self.name}·{self.title}",
+            f"  {self._hp_bar()}",
+            "  ── 屬性 " + "─" * (W - 6),
+        ]
+        for k in ("survival", "luck", "social", "spirit", "strength"):
+            bar_val = min(self.stats[k], 40)
+            bar = "▪" * (bar_val // 4) + "·" * (10 - bar_val // 4)
+            lines.append(f"  {STAT_LABELS[k]:<3} [{bar}] {self.stats[k]}")
+        st = self.status_display()
+        if st:
+            lines.append("  ── 狀態 " + "─" * (W - 6))
+            lines.append(f"  {st}")
+        lines.append("─" * W)
+        return "\n".join(lines)
 
     def status_line(self) -> str:
         hp_bar = self._hp_bar()

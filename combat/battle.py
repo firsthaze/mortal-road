@@ -2,10 +2,12 @@ from __future__ import annotations
 import json
 import os
 import random
+import select
+import sys
 import time
 from enum import Enum
 
-from .card import CardEffect
+from .card import Card, CardEffect
 from .deck import Deck
 from .enemy import Enemy, EnemyAction
 
@@ -18,6 +20,19 @@ class BattleOutcome(Enum):
     WIN = "win"
     LOSE = "lose"
     ESCAPE = "escape"
+
+
+# ── ANSI 顏色 ─────────────────────────────────────────────────
+
+class _C:
+    RED     = "\033[91m"
+    GREEN   = "\033[92m"
+    YELLOW  = "\033[93m"
+    MAGENTA = "\033[95m"
+    CYAN    = "\033[96m"
+    BOLD    = "\033[1m"
+    DIM     = "\033[2m"
+    RESET   = "\033[0m"
 
 
 # ── 顯示輔助 ──────────────────────────────────────────────────
@@ -33,8 +48,25 @@ def _p(text: str = "") -> None:
 def _pause(sec: float = 0.6) -> None:
     time.sleep(sec)
 
+def _timed_pause(sec: float) -> None:
+    """等待 sec 秒，或使用者按 Enter 立即跳過。"""
+    print(f"  {_C.DIM}（按 Enter 立即繼續…）{_C.RESET}", end="\r", flush=True)
+    try:
+        rlist, _, _ = select.select([sys.stdin], [], [], sec)
+        if rlist:
+            sys.stdin.readline()
+    except (OSError, ValueError):
+        time.sleep(sec)
+    print(" " * 30, end="\r", flush=True)
+
+def _typewrite(text: str, delay: float = 0.018) -> None:
+    for ch in text:
+        print(ch, end="", flush=True)
+        time.sleep(delay)
+    print()
+
 def _energy_bar(cur: int, max_e: int) -> str:
-    return "■" * cur + "□" * (max_e - cur) + f"  ({cur}/{max_e})"
+    return _C.YELLOW + "■" * cur + _C.DIM + "□" * (max_e - cur) + _C.RESET + f"  ({cur}/{max_e})"
 
 def _clear() -> None:
     print("\n" * 3)
@@ -42,9 +74,8 @@ def _clear() -> None:
 
 # ── 卡牌效果應用 ───────────────────────────────────────────────
 
-def _apply_effect_wrap(effect: CardEffect, user, target, deck: Deck) -> tuple[int, bool]:
-    """回傳 (extra_energy, instant_win)"""
-    # 修正方法名稱
+def _apply_effect_wrap(effect: CardEffect, user, target, deck: Deck) -> tuple[int, bool, bool]:
+    """回傳 (extra_energy, instant_win, had_extra_draw)"""
     phys = effect.damage
     if phys > 0 and "duty_bonus" in user.statuses:
         mult = user.statuses["duty_bonus"]["multiplier"]
@@ -56,18 +87,18 @@ def _apply_effect_wrap(effect: CardEffect, user, target, deck: Deck) -> tuple[in
     if phys > 0:
         _, msgs = target.receive_damage(phys, true_damage=False)
         for m in msgs:
-            _p(f"  {m}")
+            _typewrite(f"  {m}")
     if effect.true_damage > 0:
         _, msgs = target.receive_damage(effect.true_damage, true_damage=True)
         for m in msgs:
-            _p(f"  {m}")
+            _typewrite(f"  {m}")
     if effect.self_damage > 0:
         user.receive_damage(effect.self_damage, true_damage=True)
-        _p(f"  自身受到 {effect.self_damage} 點反傷。")
+        _typewrite(f"  自身受到 {effect.self_damage} 點反傷。")
     if effect.healing > 0:
         restored = user.heal(effect.healing)
         if restored > 0:
-            _p(f"  恢復 {restored} 點生命。")
+            _typewrite(f"  {_C.GREEN}恢復 {restored} 點生命。{_C.RESET}")
     if effect.self_block > 0:
         user.apply_status_raw("block", effect.self_block)
     if effect.self_ward > 0:
@@ -76,12 +107,14 @@ def _apply_effect_wrap(effect: CardEffect, user, target, deck: Deck) -> tuple[in
         target.apply_status_raw(sa.name, sa.value, sa.extra)
     for sa in effect.self_statuses:
         user.apply_status_raw(sa.name, sa.value, sa.extra)
-    if effect.extra_draw > 0:
+
+    had_extra_draw = effect.extra_draw > 0
+    if had_extra_draw:
         drawn = deck.draw(effect.extra_draw)
         if drawn:
             names = "、".join(c.name for c in drawn)
-            _p(f"  額外抽牌：{names}")
-    return effect.extra_energy, effect.instant_win
+            _typewrite(f"  {_C.CYAN}額外抽牌：{names}{_C.RESET}")
+    return effect.extra_energy, effect.instant_win, had_extra_draw
 
 
 # ── 逃跑判定 ──────────────────────────────────────────────────
@@ -92,27 +125,32 @@ def _escape_roll(character) -> bool:
     return random.random() * 100 < threshold
 
 
+# ── 自動結束判定 ──────────────────────────────────────────────
+
+def _no_playable_cards(hand: list[Card], energy: int) -> bool:
+    """手牌中已無任何可出的牌。"""
+    return all(c.cost > energy for c in hand)
+
+
 # ── 戰鬥畫面 ──────────────────────────────────────────────────
 
 def _render(character, enemy: Enemy, deck: Deck, energy: int, max_energy: int) -> None:
     _clear()
-    _div("═")
-    # 敵人區
+    print(_C.BOLD + "═" * W + _C.RESET)
     intent_str = enemy._next_action.intent_str() if enemy._next_action else "？？？"
     st = enemy.status_display()
-    _p(f"  【{enemy.name}】  {enemy._hp_bar()}  {st}")
-    _p(f"  意圖：{intent_str}")
-    _div()
-    # 玩家區
+    print(f"  {_C.RED}{_C.BOLD}【{enemy.name}】{_C.RESET}  {_C.YELLOW}{enemy._hp_bar()}{_C.RESET}  {st}")
+    print(f"  {_C.MAGENTA}意圖：{intent_str}{_C.RESET}")
+    print("─" * W)
     st_p = character.status_display()
-    _p(f"  {character._hp_bar()}  {st_p}")
-    _p(f"  【{character.name}·{character.title}】")
-    _p(f"  能量：{_energy_bar(energy, max_energy)}    {deck.summary()}")
-    _div()
-    _p(deck.hand_display())
-    _div()
-    _p("  [1-5] 出牌   [e] 結束回合   [r] 逃跑")
-    _div("═")
+    print(f"  {_C.CYAN}{character._hp_bar()}{_C.RESET}  {st_p}")
+    print(f"  {_C.CYAN}{_C.BOLD}【{character.traveler_name}·{character.title}】{_C.RESET}")
+    print(f"  能量：{_energy_bar(energy, max_energy)}    {deck.summary()}")
+    print("─" * W)
+    _p(deck.hand_display(character))
+    print("─" * W)
+    _p("  [1-5] 出牌   [e] 結束回合   [r] 逃跑   [s] 查看狀態")
+    print(_C.BOLD + "═" * W + _C.RESET)
 
 
 # ── 主戰鬥類別 ────────────────────────────────────────────────
@@ -128,14 +166,14 @@ class Battle:
 
     def run(self) -> BattleOutcome:
         _clear()
-        _div("═")
-        _p(f"  遭遇戰鬥：【{self.enemy.name}】")
-        _p(f"  {self.enemy.flavor}")
-        _div("═")
+        print(_C.BOLD + "═" * W + _C.RESET)
+        _typewrite(f"  遭遇戰鬥：{_C.RED}{_C.BOLD}【{self.enemy.name}】{_C.RESET}")
+        _typewrite(f"  {_C.DIM}{self.enemy.flavor}{_C.RESET}")
+        print(_C.BOLD + "═" * W + _C.RESET)
         _pause(1.0)
 
-        # 第一回合先確定敵人意圖
         self.enemy.select_action(self.character)
+        turn_delay = _cfg["game"].get("turn_delay", 3.0)
 
         while self.character.is_alive() and self.enemy.is_alive():
             outcome = self._player_turn()
@@ -149,6 +187,9 @@ class Battle:
             if outcome:
                 self.outcome = outcome
                 break
+            if self.character.is_alive() and self.enemy.is_alive():
+                _p(f"\n  {_C.DIM}── 回合結束，稍作停頓… ──{_C.RESET}")
+                _timed_pause(turn_delay)
 
         self._show_result()
         return self.outcome
@@ -156,23 +197,56 @@ class Battle:
     # ── 玩家回合 ──────────────────────────────────────────────
 
     def _player_turn(self) -> BattleOutcome | None:
-        # 回合開始：tick 狀態
         msgs = self.character.tick_start_of_turn()
         for m in msgs:
-            _p(f"  {m}")
+            _typewrite(f"  {m}")
         if not self.character.is_alive():
             return BattleOutcome.LOSE
 
-        # 抽牌
         self.deck.draw(self.hand_size)
         energy = self.base_energy
+        pending: list[Card] = []  # 儲存卡牌物件，保留原始手牌語意
 
         while True:
+            # 處理連打佇列（card 物件，不依賴動態 index）
+            if pending:
+                card = pending.pop(0)
+                if card not in self.deck.hand:
+                    _typewrite(f"  {_C.YELLOW}【{card.name}】已不在手中，跳過。{_C.RESET}")
+                    continue
+                if card.cost > energy:
+                    _typewrite(f"  {_C.YELLOW}能量不足，停止連打。（{card.name} 需 {card.cost}，剩 {energy}）{_C.RESET}")
+                    pending.clear()
+                    continue
+                self.deck.play(card)
+                energy -= card.cost
+                _typewrite(f"\n  {_C.CYAN}出牌：{_C.BOLD}{card.name}{_C.RESET}")
+                effect = card.play(self.character, self.enemy)
+                for m in effect.messages:
+                    _typewrite(f"  {m}")
+                extra_e, instant_win, had_draw = _apply_effect_wrap(
+                    effect, self.character, self.enemy, self.deck
+                )
+                energy += extra_e
+                _pause(0.4)
+                if had_draw or "stun" in self.character.statuses or not self.enemy.is_alive():
+                    if pending:
+                        _typewrite(f"  {_C.YELLOW}手牌已變動，暫停連打。{_C.RESET}")
+                    pending.clear()
+                if instant_win or not self.enemy.is_alive():
+                    self.deck.end_turn()
+                    return BattleOutcome.WIN if instant_win else None
+                if _no_playable_cards(self.deck.hand, energy) and not pending:
+                    _typewrite(f"  {_C.DIM}（費用不足，自動結束回合）{_C.RESET}")
+                    _pause(0.4)
+                    break
+                continue
+
+            # 顯示畫面並等待輸入
             _render(self.character, self.enemy, self.deck, energy, self.base_energy)
 
-            # 暈眩：跳過行動
             if "stun" in self.character.statuses:
-                _p("  暈眩！本回合無法行動。")
+                _typewrite(f"  {_C.YELLOW}暈眩！本回合無法行動。{_C.RESET}")
                 _pause(1.2)
                 break
 
@@ -181,49 +255,77 @@ class Battle:
             if raw == "e":
                 break
 
+            if raw == "s":
+                self._show_status_detail()
+                continue
+
             if raw == "r":
                 if _escape_roll(self.character):
-                    _p("\n  成功脫身！趁亂逃離了戰鬥。")
+                    _typewrite(f"\n  {_C.GREEN}成功脫身！趁亂逃離了戰鬥。{_C.RESET}")
                     _pause(1.0)
                     self.deck.end_turn()
                     return BattleOutcome.ESCAPE
                 else:
-                    _p("\n  逃跑失敗！敵人搶先出手！")
+                    _typewrite(f"\n  {_C.RED}逃跑失敗！敵人搶先出手！{_C.RESET}")
                     _pause(0.8)
                     self.deck.end_turn()
-                    # 敵人獲得一次免費行動
                     self._execute_enemy_free_attack()
                     if not self.character.is_alive():
                         return BattleOutcome.LOSE
                     self.enemy.select_action(self.character)
                     return None
 
-            if raw.isdigit():
-                idx = int(raw) - 1
-                if 0 <= idx < len(self.deck.hand):
-                    card = self.deck.hand[idx]
-                    if card.cost > energy:
-                        _p(f"  能量不足（需要 {card.cost}，剩餘 {energy}）。")
-                        _pause(0.5)
-                        continue
-                    self.deck.play(card)
-                    energy -= card.cost
-                    _p(f"\n  出牌：{card.name}")
-                    effect = card.play(self.character, self.enemy)
-                    for m in effect.messages:
-                        _p(f"  {m}")
-                    extra_e, instant_win = _apply_effect_wrap(
-                        effect, self.character, self.enemy, self.deck
-                    )
-                    energy += extra_e
-                    _pause(0.5)
-                    if instant_win or not self.enemy.is_alive():
-                        self.deck.end_turn()
-                        return None
+            # 解析數字輸入（支援 "1" 或 "5 2 1"）
+            parts = raw.split()
+            indices: list[int] = []
+            valid = True
+            for p in parts:
+                if p.isdigit() and 1 <= int(p) <= 5:
+                    indices.append(int(p) - 1)
                 else:
-                    _p("  無效的選擇。")
+                    valid = False
+                    break
+
+            if valid and indices:
+                first_idx = indices[0]
+                if first_idx >= len(self.deck.hand):
+                    _typewrite("  無效的選擇。")
+                    continue
+                card = self.deck.hand[first_idx]
+                if card.cost > energy:
+                    _typewrite(f"  {_C.YELLOW}能量不足（需要 {card.cost}，剩餘 {energy}）。{_C.RESET}")
+                    _pause(0.5)
+                    continue
+                # 出第一張牌前先把後續 index 轉為卡牌物件（保留原始手牌位置語意）
+                remaining_cards = [
+                    self.deck.hand[i] for i in indices[1:]
+                    if i < len(self.deck.hand)
+                ]
+                self.deck.play(card)
+                energy -= card.cost
+                _typewrite(f"\n  {_C.CYAN}出牌：{_C.BOLD}{card.name}{_C.RESET}")
+                effect = card.play(self.character, self.enemy)
+                for m in effect.messages:
+                    _typewrite(f"  {m}")
+                extra_e, instant_win, had_draw = _apply_effect_wrap(
+                    effect, self.character, self.enemy, self.deck
+                )
+                energy += extra_e
+                _pause(0.4)
+                if had_draw or "stun" in self.character.statuses or not self.enemy.is_alive():
+                    if remaining_cards:
+                        _typewrite(f"  {_C.YELLOW}手牌已變動，暫停連打。{_C.RESET}")
+                else:
+                    pending.extend(remaining_cards)
+                if instant_win or not self.enemy.is_alive():
+                    self.deck.end_turn()
+                    return BattleOutcome.WIN if instant_win else None
+                if _no_playable_cards(self.deck.hand, energy) and not pending:
+                    _typewrite(f"  {_C.DIM}（費用不足，自動結束回合）{_C.RESET}")
+                    _pause(0.4)
+                    break
             else:
-                _p("  請輸入手牌編號、e 或 r。")
+                _typewrite("  請輸入手牌編號（1-5）、e 或 r。")
 
         self.deck.end_turn()
         return None
@@ -233,39 +335,41 @@ class Battle:
     def _enemy_turn(self) -> BattleOutcome | None:
         msgs = self.enemy.tick_start_of_turn()
         for m in msgs:
-            _p(f"  {m}")
+            _typewrite(f"  {m}")
         if not self.enemy.is_alive():
             return None
 
-        _p(f"\n  ── 【{self.enemy.name}】的回合 ──")
+        _typewrite(f"\n  {_C.RED}── 【{self.enemy.name}】的回合 ──{_C.RESET}")
 
         if "stun" in self.enemy.statuses:
-            _p(f"  【{self.enemy.name}】暈眩，跳過行動。")
+            _typewrite(f"  {_C.YELLOW}【{self.enemy.name}】暈眩，跳過行動。{_C.RESET}")
             _pause(0.8)
         else:
             action = self.enemy.execute_action()
-            _p(f"  {self.enemy.name}：{action.label}！")
+            _typewrite(f"  {_C.RED}{self.enemy.name}：{action.label}！{_C.RESET}")
             _pause(0.4)
 
-            # 恐懼狀態：敵人傷害降低 25%
             fear_mult = 0.75 if "fear" in self.enemy.statuses else 1.0
             if action.damage > 0:
                 actual, msgs = self.character.receive_damage(
                     int(action.damage * fear_mult), true_damage=False
                 )
-                suffix = f"（受到 {actual} 點傷害）" if actual > 0 else "（閃避）"
-                _p(f"  物理攻擊 {action.damage} {suffix}")
+                suffix = f"（受到 {_C.RED}{actual}{_C.RESET} 點傷害）" if actual > 0 else f"（{_C.GREEN}閃避{_C.RESET}）"
+                _typewrite(f"  物理攻擊 {action.damage} {suffix}")
                 for m in msgs:
-                    _p(f"    {m}")
+                    _typewrite(f"    {m}")
 
             if action.true_damage > 0:
                 actual, msgs = self.character.receive_damage(
                     int(action.true_damage * fear_mult), true_damage=True
                 )
-                suffix = f"（受到 {actual} 點真實傷害）" if actual > 0 else "（結界吸收）"
-                _p(f"  真實傷害 {action.true_damage} {suffix}")
+                suffix = f"（受到 {_C.RED}{actual}{_C.RESET} 點真實傷害）" if actual > 0 else f"（{_C.CYAN}結界吸收{_C.RESET}）"
+                _typewrite(f"  真實傷害 {action.true_damage} {suffix}")
                 for m in msgs:
-                    _p(f"    {m}")
+                    _typewrite(f"    {m}")
+
+            if action.self_heal > 0:
+                _typewrite(f"  {_C.YELLOW}【{self.enemy.name}】回復了 {action.self_heal} 點生命！{_C.RESET}")
 
             if action.status_name:
                 self.character.apply_status_raw(
@@ -273,26 +377,75 @@ class Battle:
                 )
                 from characters.base import _STATUS_NAMES
                 label = _STATUS_NAMES.get(action.status_name, action.status_name)
-                _p(f"  施加{label}效果。")
+                _typewrite(f"  施加{_C.MAGENTA}{label}{_C.RESET}效果。")
 
         if not self.character.is_alive():
             return BattleOutcome.LOSE
 
-        # 敵人決定下一回合意圖
         self.enemy.select_action(self.character)
         _pause(0.8)
         return None
 
+    def _show_status_detail(self) -> None:
+        _STATUS_DESC = {
+            "block":      "吸收物理傷害（消耗後消失）",
+            "ward":       "吸收真實傷害（消耗後消失）",
+            "evade":      "迴避下一次物理攻擊（每層抵擋一次）",
+            "stun":       "無法行動",
+            "fear":       "攻擊傷害降低 25%",
+            "curse":      "所受傷害提升 20%",
+            "burn":       "每回合受到真實傷害",
+            "duty_bonus": "下次物理攻擊傷害 +50%",
+        }
+        print(_C.BOLD + "═" * W + _C.RESET)
+        _p("  ◆ 當前狀態詳情")
+        _div()
+
+        _p(f"  {_C.CYAN}【{self.character.traveler_name}】{_C.RESET}")
+        if self.character.statuses:
+            for k, v in self.character.statuses.items():
+                desc = _STATUS_DESC.get(k, "")
+                if k in ("block", "ward"):
+                    _p(f"    {k}：{v['value']} 點  ── {desc}")
+                elif k == "evade":
+                    _p(f"    迴避：{v['stacks']} 層  ── {desc}")
+                elif k == "burn":
+                    _p(f"    燃燒：每回合 {v['damage']} 傷，剩 {v['turns']} 回  ── {desc}")
+                elif k == "duty_bonus":
+                    _p(f"    蓄力  ── {desc}")
+                else:
+                    _p(f"    {k}：{v['turns']} 回合  ── {desc}")
+        else:
+            _p("    （無狀態）")
+
+        _div()
+        _p(f"  {_C.RED}【{self.enemy.name}】{_C.RESET}")
+        if self.enemy.statuses:
+            for k, v in self.enemy.statuses.items():
+                desc = _STATUS_DESC.get(k, "")
+                if k in ("block", "ward"):
+                    _p(f"    {k}：{v['value']} 點  ── {desc}")
+                elif k == "evade":
+                    _p(f"    迴避：{v['stacks']} 層  ── {desc}")
+                elif k == "burn":
+                    _p(f"    燃燒：每回合 {v['damage']} 傷，剩 {v['turns']} 回  ── {desc}")
+                else:
+                    _p(f"    {k}：{v['turns']} 回合  ── {desc}")
+        else:
+            _p("    （無狀態）")
+
+        print(_C.BOLD + "═" * W + _C.RESET)
+        input("  ──（按 Enter 返回戰鬥）──\n")
+
     def _execute_enemy_free_attack(self) -> None:
-        """逃跑失敗時敵人的免費攻擊（執行當前意圖）"""
         action = self.enemy.execute_action()
-        _p(f"  【{self.enemy.name}】趁機：{action.label}！")
+        _typewrite(f"  {_C.RED}【{self.enemy.name}】趁機：{action.label}！{_C.RESET}")
         if action.damage > 0:
             actual, _ = self.character.receive_damage(action.damage, true_damage=False)
-            _p(f"  受到 {actual} 點傷害。")
+            _typewrite(f"  受到 {actual} 點傷害。")
         if action.true_damage > 0:
             actual, _ = self.character.receive_damage(action.true_damage, true_damage=True)
-            _p(f"  受到 {actual} 點真實傷害。")
+            _typewrite(f"  受到 {actual} 點真實傷害。")
         if action.status_name:
             self.character.apply_status_raw(
                 action.status_name, action.status_value, action.status_extra
@@ -303,12 +456,14 @@ class Battle:
 
     def _show_result(self) -> None:
         _clear()
-        _div("═")
+        print(_C.BOLD + "═" * W + _C.RESET)
         if self.outcome == BattleOutcome.WIN:
-            _p(f"  勝利！【{self.enemy.name}】已被擊倒。")
+            _typewrite(f"  {_C.GREEN}{_C.BOLD}勝利！【{self.enemy.name}】已被擊倒。{_C.RESET}")
         elif self.outcome == BattleOutcome.LOSE:
-            _p("  落敗……生命耗盡，倒在了這裡。")
+            _typewrite(f"  {_C.RED}落敗……生命耗盡，倒在了這裡。{_C.RESET}")
         elif self.outcome == BattleOutcome.ESCAPE:
-            _p("  成功脫身，繼續前行。")
-        _div("═")
-        _pause(1.2)
+            _typewrite(f"  {_C.CYAN}成功脫身，繼續前行。{_C.RESET}")
+        _p(f"  {self.character.traveler_name}  生命：{self.character.current_hp}/{self.character.stats['hp']}")
+        print(_C.BOLD + "═" * W + _C.RESET)
+        delay = _cfg["game"].get("battle_result_delay", 3.0)
+        _timed_pause(delay)

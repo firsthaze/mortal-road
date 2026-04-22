@@ -52,6 +52,14 @@ class Card:
     def play(self, user: "Character", target) -> CardEffect:
         return self._effect_fn(user, target)
 
+    def preview(self, user: "Character") -> CardEffect:
+        class _Dummy:
+            current_hp = 100
+            stats = {"hp": 100}
+            statuses: dict = {}
+            def stat(self, _): return 15
+        return self._effect_fn(user, _Dummy())
+
     def __repr__(self) -> str:
         return f"[{self.name}·{self.cost}能]"
 
@@ -433,10 +441,189 @@ def _make_phantom_blade() -> Card:
     return Card("phantom_blade", "幻影刃", 1, "物理傷害（幸運加成）並獲得迴避", effect)
 
 
+def _make_lucky_find() -> Card:
+    def effect(user, target):
+        if _luck_roll(user.stat("luck")):
+            return CardEffect(extra_draw=3, messages=["天降好運！一口氣摸了三張牌。"])
+        hp = 3 + int(user.stat("luck") * 0.1)
+        return CardEffect(extra_draw=1, healing=hp, messages=[f"運氣稍遜，摸了一張牌，恢復 {hp} 點生命。"])
+    return Card("lucky_find", "天降運財", 0, "零費，幸運判定：成功抽3牌，失敗抽1牌+少量回血", effect)
+
+
+def _make_throw_rock() -> Card:
+    def effect(user, target):
+        dmg = 5 + int(user.stat("luck") * 0.3)
+        return CardEffect(
+            damage=dmg,
+            target_statuses=[StatusApplication("fear", 1)],
+            messages=[f"撿起路邊的石頭砸過去，造成 {dmg} 點傷害，敵人心生畏懼。"],
+        )
+    return Card("throw_rock", "擲石", 1, "物理傷害（幸運加成）並施加恐懼1回合", effect)
+
+
+def _make_desperate_block() -> Card:
+    def effect(user, target):
+        hp_missing = user.stats["hp"] - user.current_hp
+        blk = 4 + int(hp_missing * 0.25)
+        return CardEffect(self_block=blk, messages=[f"拼死護體，失去越多越頑強，獲得 {blk} 點護盾。"])
+    return Card("desperate_block", "拼死護體", 0, "零費，護盾值隨失去的生命增加", effect)
+
+
+def _make_gamble_strike() -> Card:
+    def effect(user, target):
+        if _luck_roll(user.stat("luck")):
+            dmg = 20 + int(user.stat("strength") * 0.7)
+            return CardEffect(damage=dmg, messages=[f"賭命一擊，豁出去了！造成 {dmg} 點傷害！"])
+        self_dmg = 6
+        return CardEffect(self_damage=self_dmg, messages=[f"出手落空，反傷自身 {self_dmg} 點。"])
+    return Card("gamble_strike", "賭命一擊", 2, "幸運判定：成功造成大量傷害，失敗自傷6點", effect)
+
+
+def _make_butterfly_step() -> Card:
+    def effect(user, target):
+        dmg = 3 + int(user.stat("spirit") * 0.2) + int(user.stat("luck") * 0.1)
+        return CardEffect(
+            true_damage=dmg,
+            self_statuses=[StatusApplication("evade", 1)],
+            messages=[f"蝶步輕身，造成 {dmg} 點真實傷害，身形飄忽獲得迴避一層。"],
+        )
+    return Card("butterfly_step", "蝶步輕身", 1, "真實傷害（靈力+幸運加成）並獲得迴避", effect)
+
+
+def _make_poison_fan() -> Card:
+    def effect(user, target):
+        dmg = 5 + int(user.stat("social") * 0.2)
+        burn_dmg = 2 + int(user.stat("spirit") * 0.15)
+        turns = 2
+        return CardEffect(
+            damage=dmg,
+            target_statuses=[StatusApplication("burn", burn_dmg, {"turns": turns})],
+            messages=[f"毒扇一揮，造成 {dmg} 點傷害，毒香引燃（每回合 {burn_dmg}，持續 {turns} 回合）。"],
+        )
+    return Card("poison_fan", "毒扇", 1, "物理傷害（社交加成）並施加燃燒（靈力加成）", effect)
+
+
+def _make_beguile() -> Card:
+    def effect(user, target):
+        if _social_roll(user.stat("social")):
+            return CardEffect(
+                target_statuses=[StatusApplication("stun", 2)],
+                messages=["惑心術大成！敵人神魂顛倒，暈眩 2 回合！"],
+            )
+        return CardEffect(
+            target_statuses=[StatusApplication("curse", 1), StatusApplication("fear", 1)],
+            messages=["惑心術失效，但敵人仍感不安，詛咒+恐懼各 1 回合。"],
+        )
+    return Card("beguile", "惑心術", 2, "社交判定：成功暈眩2回合，失敗施加詛咒+恐懼", effect)
+
+
+def _make_chain_bind() -> Card:
+    def effect(user, target):
+        dmg = 10 + int(user.stat("strength") * 0.5)
+        fx = CardEffect(damage=dmg, messages=[f"鎖鏈出手，造成 {dmg} 點傷害！"])
+        if _stun_roll(35, user.stat("strength")):
+            fx.target_statuses.append(StatusApplication("stun", 1))
+            fx.messages.append("鎖拿成功，敵人下回合無法行動！")
+        return fx
+    return Card("chain_bind", "鎖拿", 2, "物理傷害（武力加成），有機率暈眩敵人（武力加成機率）", effect)
+
+
+def _make_patrol_sweep() -> Card:
+    def effect(user, target):
+        dmg = 8 + int(user.stat("strength") * 0.35)
+        bonus = int(dmg * 0.5) if target.statuses else 0
+        total = dmg + bonus
+        suffix = "（敵人有異常狀態，額外 +50% 傷害！）" if bonus else ""
+        return CardEffect(damage=total, messages=[f"橫掃一刀，造成 {total} 點傷害。{suffix}"])
+    return Card("patrol_sweep", "橫掃", 1, "物理傷害（武力加成），敵人有狀態效果時傷害+50%", effect)
+
+
+def _make_badge_authority() -> Card:
+    def effect(user, target):
+        if _social_roll(user.stat("social")):
+            turns = 1 + int(user.stat("social") / 25)
+            return CardEffect(
+                target_statuses=[StatusApplication("fear", turns)],
+                messages=[f"官威震懾！敵人膽寒，恐懼 {turns} 回合。"],
+            )
+        return CardEffect(messages=["官威未能壓制對方。"])
+    return Card("badge_authority", "官威震懾", 0, "零費，社交判定：成功施加恐懼（社交加成回合數）", effect)
+
+
+def _make_suppression() -> Card:
+    def effect(user, target):
+        dmg = 15 + int(user.stat("strength") * 0.6)
+        blk = 5 + int(user.stat("survival") * 0.4)
+        return CardEffect(
+            damage=dmg,
+            self_block=blk,
+            messages=[f"鎮壓！全力一擊造成 {dmg} 點傷害，同時獲得 {blk} 點護盾。"],
+        )
+    return Card("suppression", "鎮壓", 2, "大量物理傷害（武力加成）並獲得護盾（生存加成）", effect)
+
+
+def _make_interrogate() -> Card:
+    def effect(user, target):
+        turns = 1 + int(user.stat("social") / 20)
+        return CardEffect(
+            target_statuses=[StatusApplication("curse", turns), StatusApplication("fear", turns)],
+            messages=[f"嚴厲審訊，施加詛咒與恐懼各 {turns} 回合。（受傷+20%，攻擊-25%）"],
+        )
+    return Card("interrogate", "審訊", 1, "同時施加詛咒+恐懼（社交加成持續回合）", effect)
+
+
+def _make_five_thunder() -> Card:
+    def effect(user, target):
+        dmg = 16 + int(user.stat("spirit") * 0.7)
+        return CardEffect(true_damage=dmg, messages=[f"五雷轟頂！靈力大爆發，造成 {dmg} 點真實傷害！"])
+    return Card("five_thunder", "五雷", 2, "大量真實傷害（靈力加成）", effect)
+
+
+def _make_spirit_mend() -> Card:
+    def effect(user, target):
+        hp = 6 + int(user.stat("spirit") * 0.3)
+        ward = 4 + int(user.stat("spirit") * 0.2)
+        return CardEffect(healing=hp, self_ward=ward,
+                          messages=[f"氣息調和，恢復 {hp} 點生命，並獲得 {ward} 點結界。"])
+    return Card("spirit_mend", "氣息調和", 1, "回復生命+獲得結界（靈力加成）", effect)
+
+
+def _make_yin_stance() -> Card:
+    def effect(user, target):
+        evade_stacks = 1 + int(user.stat("luck") / 30)
+        blk = 4 + int(user.stat("spirit") * 0.25)
+        return CardEffect(
+            self_block=blk,
+            self_statuses=[StatusApplication("evade", evade_stacks)],
+            messages=[f"陰身訣！獲得 {blk} 點護盾與 {evade_stacks} 層迴避。"],
+        )
+    return Card("yin_stance", "陰身訣", 1, "獲得護盾（靈力加成）+迴避（幸運加成層數）", effect)
+
+
 ADVANCED_CARD_POOL = [
     "iron_will", "cursed_blade", "divine_luck",
     "soul_bind", "spirit_burst", "phantom_blade",
 ]
+
+# 各職業可從事件機緣獲得的牌池（職業專屬 + 部分通用進階牌）
+CLASS_EVENT_POOL: dict[str, list[str]] = {
+    "beggar": [
+        "lucky_find", "throw_rock", "desperate_block", "gamble_strike",
+        "wild_swing", "desperation", "iron_will", "divine_luck", "phantom_blade",
+    ],
+    "courtesan": [
+        "butterfly_step", "poison_fan", "beguile",
+        "enchant", "spirit_dance", "soul_bind", "spirit_burst", "iron_will",
+    ],
+    "constable": [
+        "chain_bind", "patrol_sweep", "badge_authority", "suppression", "interrogate",
+        "arrest", "heavy_blow", "cursed_blade", "iron_will",
+    ],
+    "taoist": [
+        "five_thunder", "spirit_mend", "yin_stance",
+        "yin_surge", "curse_seal", "spirit_burst", "soul_bind", "iron_will",
+    ],
+}
 
 
 # ── 牌庫 ────────────────────────────────────────────────────────
@@ -482,6 +669,25 @@ CARD_REGISTRY: dict[str, Callable[[], Card]] = {
     "soul_bind":         _make_soul_bind,
     "spirit_burst":      _make_spirit_burst,
     "phantom_blade":     _make_phantom_blade,
+    # 乞丐專屬進階
+    "lucky_find":        _make_lucky_find,
+    "throw_rock":        _make_throw_rock,
+    "desperate_block":   _make_desperate_block,
+    "gamble_strike":     _make_gamble_strike,
+    # 花魁專屬進階
+    "butterfly_step":    _make_butterfly_step,
+    "poison_fan":        _make_poison_fan,
+    "beguile":           _make_beguile,
+    # 捕快專屬進階
+    "chain_bind":        _make_chain_bind,
+    "patrol_sweep":      _make_patrol_sweep,
+    "badge_authority":   _make_badge_authority,
+    "suppression":       _make_suppression,
+    "interrogate":       _make_interrogate,
+    # 道士專屬進階
+    "five_thunder":      _make_five_thunder,
+    "spirit_mend":       _make_spirit_mend,
+    "yin_stance":        _make_yin_stance,
 }
 
 

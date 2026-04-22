@@ -9,6 +9,7 @@ class EnemyAction:
     damage: int = 0
     true_damage: int = 0
     self_block: int = 0
+    self_heal: int = 0
     status_name: str = ""
     status_value: int = 0
     status_extra: dict = field(default_factory=dict)
@@ -21,6 +22,8 @@ class EnemyAction:
             parts.append(f"真實傷害 {self.true_damage}")
         if self.self_block:
             parts.append(f"防禦 {self.self_block}")
+        if self.self_heal:
+            parts.append(f"回血 {self.self_heal}")
         if self.status_name:
             from characters.base import _STATUS_NAMES
             parts.append(f"施加{_STATUS_NAMES.get(self.status_name, self.status_name)}")
@@ -57,6 +60,36 @@ ENEMY_TEMPLATES: dict[str, dict] = {
         "flavor": "面色蒼白，眼神詭異，周身縈繞著黑色靈氣。",
         "hp": 55, "strength": 8, "survival": 8, "spirit": 30, "social": 15,
         "ai": "advanced",
+    },
+    "wandering_master": {
+        "name": "江湖散人",
+        "flavor": "衣衫隨意，眼神銳利，一身功夫深藏不露。",
+        "hp": 75, "strength": 25, "survival": 18, "spirit": 20, "social": 15,
+        "ai": "advanced",
+    },
+    "cult_enforcer": {
+        "name": "邪教護法",
+        "flavor": "身披黑袍，手持鐵鏈，是幕後勢力派來的爪牙。",
+        "hp": 80, "strength": 28, "survival": 15, "spirit": 18, "social": 10,
+        "ai": "normal",
+    },
+    "heavenly_schemer": {
+        "name": "天機老人",
+        "flavor": "鶴髮童顏，眼中藏著千算萬計，微笑之間已布下天羅地網。",
+        "hp": 70, "strength": 6, "survival": 12, "spirit": 35, "social": 28,
+        "ai": "boss_schemer",
+    },
+    "phantom_assassin": {
+        "name": "幽靈刺客",
+        "flavor": "身形如煙，來去無蹤，刀光閃過之處只剩一道血痕。",
+        "hp": 60, "strength": 30, "survival": 8, "spirit": 12, "social": 5,
+        "ai": "boss_assassin",
+    },
+    "blood_shaman": {
+        "name": "血魔祭司",
+        "flavor": "以血為祭，以痛為禱，每一次呼吸都伴隨著詭異的低鳴。",
+        "hp": 90, "strength": 15, "survival": 20, "spirit": 25, "social": 5,
+        "ai": "boss_shaman",
     },
 }
 
@@ -102,6 +135,12 @@ class Enemy:
             action = self._ai_simple()
         elif ai == "normal":
             action = self._ai_normal()
+        elif ai == "boss_schemer":
+            action = self._ai_boss_schemer(player)
+        elif ai == "boss_assassin":
+            action = self._ai_boss_assassin(player)
+        elif ai == "boss_shaman":
+            action = self._ai_boss_shaman(player)
         else:
             action = self._ai_advanced(player)
         self._next_action = action
@@ -153,14 +192,70 @@ class Enemy:
         ]
         return patterns[t]
 
+    def _ai_boss_schemer(self, player) -> EnemyAction:
+        """天機老人：詛咒疊加型。奇數回合疊詛咒封印，偶數回合按詛咒層數蓄力打擊。"""
+        t = self._turn_count
+        hp_ratio = self.current_hp / self.stats["hp"]
+        if hp_ratio < 0.4:
+            # 低血：連續施壓，詛咒+真實傷害同時
+            return EnemyAction("天羅地網", status_name="curse", status_value=2,
+                               true_damage=self._true(base=8, mult=0.5))
+        if t % 3 == 0:
+            return EnemyAction("封印術", status_name="curse", status_value=2)
+        if t % 3 == 1:
+            curse_stacks = player.statuses.get("curse", {}).get("turns", 0)
+            bonus = curse_stacks * 3
+            return EnemyAction("算計一擊", true_damage=self._true() + bonus)
+        return EnemyAction("靈氣護體", self_block=self._blk() + 5)
+
+    def _ai_boss_assassin(self, player) -> EnemyAction:
+        """幽靈刺客：閃避+爆發型。偶數回合積累迴避，奇數回合爆發高傷害。"""
+        t = self._turn_count
+        hp_ratio = self.current_hp / self.stats["hp"]
+        if hp_ratio < 0.35:
+            # 低血爆發：無視一切直接斬
+            return EnemyAction("必殺刺·決死", damage=self._phys(base=20, mult=0.9))
+        if t % 4 == 0:
+            return EnemyAction("隱入虛影", self_block=8,
+                               status_name="evade", status_value=2)
+        if t % 4 == 1:
+            return EnemyAction("幻影連斬", damage=self._phys(base=6, mult=0.5),
+                               status_name="stun", status_value=1)
+        if t % 4 == 2:
+            return EnemyAction("穿心一刺", damage=self._phys(base=18, mult=0.8))
+        return EnemyAction("殘影突刺", damage=self._phys(base=8, mult=0.4),
+                           true_damage=self._true(base=4, mult=0.3))
+
+    def _ai_boss_shaman(self, player) -> EnemyAction:
+        """血魔祭司：血祭回血型。定期獻血自回，同時燃燒玩家，越傷越強。"""
+        t = self._turn_count
+        hp_ratio = self.current_hp / self.stats["hp"]
+        if t % 5 == 0:
+            heal_amt = int(self.stats["hp"] * 0.12)
+            return EnemyAction("血祭儀式", self_heal=heal_amt,
+                               status_name="burn", status_value=4,
+                               status_extra={"turns": 2})
+        if t % 5 == 1:
+            return EnemyAction("腐血詛咒", status_name="curse", status_value=2,
+                               true_damage=self._true(base=4, mult=0.3))
+        if t % 5 == 2:
+            return EnemyAction("血爪撕裂", damage=self._phys(base=10, mult=0.55))
+        if t % 5 == 3:
+            heal_amt = int(self.stats["hp"] * 0.08) if hp_ratio < 0.5 else 0
+            return EnemyAction("噬血強化", damage=self._phys(base=8, mult=0.4),
+                               self_heal=heal_amt)
+        return EnemyAction("業火燎燒", status_name="burn", status_value=5,
+                           status_extra={"turns": 3})
+
     # ── 執行行動 ──────────────────────────────────────────────
 
     def execute_action(self) -> EnemyAction:
         action = self._next_action or self._ai_simple()
         self._turn_count += 1
-        # 自身護盾
         if action.self_block:
             self.apply_status_raw("block", action.self_block)
+        if action.self_heal:
+            self.current_hp = min(self.stats["hp"], self.current_hp + action.self_heal)
         return action
 
     # ── 狀態系統（與 Character 一致） ─────────────────────────
@@ -268,4 +363,5 @@ def build_enemy(enemy_id: str, difficulty_cfg: dict) -> "Enemy":
     return Enemy(enemy_id, difficulty_cfg)
 
 
+BOSS_POOL = ["heavenly_schemer", "phantom_assassin", "blood_shaman", "sorcerer"]
 ENEMY_POOL = list(ENEMY_TEMPLATES.keys())

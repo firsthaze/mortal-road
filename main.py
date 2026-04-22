@@ -64,11 +64,22 @@ def select_difficulty() -> tuple[str, dict]:
         print("  請輸入有效的數字。")
 
 
+def input_traveler_name(character) -> str:
+    divider()
+    default = character.name
+    raw = input(f"  為你的旅者取個名字（留空則使用「{default}」）：").strip()
+    name = raw if raw else default
+    typewrite(f"\n  旅者【{name}】，浮世之行，就此開始。\n", delay=0.04)
+    return name
+
+
 def main() -> None:
     try:
         while True:
             character = select_character()
             _, difficulty_cfg = select_difficulty()
+            traveler_name = input_traveler_name(character)
+            character.traveler_name = traveler_name
 
             hand_size = _config["game"]["hand_size"]
             base_energy = _config["game"]["base_energy"]

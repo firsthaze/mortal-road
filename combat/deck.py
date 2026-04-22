@@ -68,12 +68,33 @@ class Deck:
 
     # ── 顯示輔助 ──────────────────────────────────────────────
 
-    def hand_display(self) -> str:
+    def hand_display(self, user=None) -> str:
         if not self.hand:
             return "  手牌：（空）"
         lines = ["  手牌："]
         for i, card in enumerate(self.hand, 1):
-            lines.append(f"    [{i}] {card.name}（{card.cost} 能）── {card.description}")
+            if user is not None:
+                try:
+                    eff = card.preview(user)
+                    tags = []
+                    if eff.damage > 0:
+                        tags.append(f"物傷{eff.damage}")
+                    if eff.true_damage > 0:
+                        tags.append(f"真傷{eff.true_damage}")
+                    if eff.healing > 0:
+                        tags.append(f"治癒{eff.healing}")
+                    if eff.self_block > 0:
+                        tags.append(f"護盾{eff.self_block}")
+                    if eff.self_ward > 0:
+                        tags.append(f"結界{eff.self_ward}")
+                    if eff.extra_energy > 0:
+                        tags.append(f"能量+{eff.extra_energy}")
+                    dmg_str = "  ❮" + "·".join(tags) + "❯" if tags else ""
+                    lines.append(f"    [{i}] {card.name}（{card.cost}能）{dmg_str}")
+                except Exception:
+                    lines.append(f"    [{i}] {card.name}（{card.cost}能）── {card.description}")
+            else:
+                lines.append(f"    [{i}] {card.name}（{card.cost}能）── {card.description}")
         return "\n".join(lines)
 
     def summary(self) -> str:

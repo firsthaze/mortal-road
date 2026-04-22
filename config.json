@@ -2,7 +2,9 @@
   "game": {
     "hand_size": 5,
     "base_energy": 3,
-    "starting_deck_size": 10
+    "starting_deck_size": 10,
+    "battle_result_delay": 3.0,
+    "turn_delay": 3.0
   },
   "difficulty": {
     "easy":   { "enemy_hp_multiplier": 0.8, "enemy_damage_multiplier": 0.7, "enemy_ai_level": "simple" },

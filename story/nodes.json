@@ -1,8 +1,17 @@
 {
   "acts": {
-    "act1": ["act1_market", "act1_temple", "act1_road"],
-    "act2": ["act2_inn", "act2_ambush", "act2_merchant"],
-    "act3": ["act3_mountain", "act3_ruins"]
+    "act1":  ["act1_market", "act1_temple", "act1_road"],
+    "act2":  ["act2_inn", "act2_ambush", "act2_merchant"],
+    "act3":  ["act3_mountain", "act3_ruins"],
+    "act4":  ["act4_village", "act4_monastery", "act4_swamp"],
+    "act5":  ["act5_cave", "act5_bridge", "act5_valley"],
+    "act6":  ["act6_city", "act6_grave", "act6_secret"],
+    "act7":  ["act7_ghost_market", "act7_old_hermit", "act7_pursuit"],
+    "act8":  ["act8_altar", "act8_survivors", "act8_spy"],
+    "act9":  ["act9_dark_city", "act9_double_cross", "act9_champion"],
+    "act10": ["act10_alliance", "act10_revelation", "act10_siege"],
+    "act11": ["act11_meditation", "act11_farewell", "act11_gate"],
+    "act12": ["act12_confrontation"]
   },
   "nodes": {
 
@@ -11,10 +20,10 @@
       "title": "序章・浮世行",
       "text": "這世道，從來都不太平。你踏上了一段不知盡頭的旅途。",
       "class_text": {
-        "beggar": "深秋的午後，你蜷縮在城牆根下，一碗殘稀粥早已見底。忽然一名錦衣老者路過，將一塊溫熱的玉牌塞入你手，低語：「去尋它，你會得到一切。」轉眼人已不見。手中玉牌溫熱，似有什麼在召喚你。你拍了拍空空的腰間，起身，踏出了這條你住了三年的牆根。",
+        "beggar":    "深秋的午後，你蜷縮在城牆根下，一碗殘稀粥早已見底。忽然一名錦衣老者路過，將一塊溫熱的玉牌塞入你手，低語：「去尋它，你會得到一切。」轉眼人已不見。手中玉牌溫熱，似有什麼在召喚你。你拍了拍空空的腰間，起身，踏出了這條你住了三年的牆根。",
         "courtesan": "鶯歌燕舞聲中，你攤開那封藏在花籃底部的密信。寥寥數語，卻讓你心頭一緊——信中的人知道你不為人知的過去，也知道那件埋藏多年的舊事。你放下胭脂，摘去耳墜，換了一身便裝。有些事，若不親自去，恐怕永遠得不到答案。",
         "constable": "衙門一道急令，搜捕要犯，限期三日。你接過文書，仔細看了看畫像——那雙眼睛，你認識。案子背後藏著什麼，你不確定；但你知道，這一去，恐怕不只是公差這麼簡單。你拍了拍腰間的捕刀，踏出衙門大門。",
-        "taoist": "師傅深夜喚你入密室，將一卷古籍與一枚殘破的玉符交予你。「山下有一股邪氣集聚，非你不可。」他的眼中有你從未見過的憂色。你沉默地接過，下山時，天色已將破曉。山霧瀰漫，前路不明，而你的心，出奇地平靜。"
+        "taoist":    "師傅深夜喚你入密室，將一卷古籍與一枚殘破的玉符交予你。「山下有一股邪氣集聚，非你不可。」他的眼中有你從未見過的憂色。你沉默地接過，下山時，天色已將破曉。山霧瀰漫，前路不明，而你的心，出奇地平靜。"
       },
       "choices": [
         {"text": "踏上征途", "next": "__act1__"}
@@ -53,7 +62,7 @@
     "act1_shortcut": {
       "type": "story",
       "title": "另覓他途",
-      "text": "你悄悄繞開了那場麻煩，少了一場廝打，倒也清靜。只是總覺得少了些什麼——那種讓血液沸騰的感覺。算了，前路還長。",
+      "text": "你悄悄繞開了那場麻煩，少了一場廝打，倒也清靜。只是總覺得少了些什麼。算了，前路還長。",
       "choices": [
         {"text": "繼續趕路", "next": "__act2__"}
       ]
@@ -66,19 +75,20 @@
       "choices": [
         {"text": "上前請教", "next": "act1_temple_ask"},
         {"text": "自行歇腳，不去打擾", "next": "act1_temple_rest"},
-        {"text": "趁老者入定，翻看案上典籍", "next": "act1_temple_steal", "condition": {"stat": "luck", "min": 20}}
+        {"text": "趁老者入定，翻看案上典籍", "next": "act1_temple_steal", "condition": {"stat": "luck", "min": 20}},
+        {"text": "向老者挑戰，試試他的深淺", "next": "act1_provocation_fight", "condition": {"stat": "strength", "min": 20}}
       ]
     },
 
     "act1_temple_ask": {
       "type": "story",
       "title": "道緣",
-      "text": "老道士半晌後才緩緩睜眼，深深看了你一眼，點頭道：「有緣。」他從懷中掏出一件東西，放在你掌中——",
+      "text": "老道士半晌後才緩緩睜眼，深深看了你一眼，點頭道：「有緣。」",
       "class_text": {
-        "beggar": "老道士半晌後才緩緩睜眼，深深看了你一眼，點頭道：「有緣。」他遞來一包金創藥，還有半本殘缺的武功心法。「你身上有股旺盛的生氣，好好保存。」他說罷，閉目如初，不再言語。",
+        "beggar":    "老道士半晌後才緩緩睜眼，深深看了你一眼，點頭道：「有緣。」他遞來一包金創藥，還有半本殘缺的武功心法。「你身上有股旺盛的生氣，好好保存。」他說罷，閉目如初，不再言語。",
         "courtesan": "老道士半晌後才緩緩睜眼，深深看了你一眼，點頭道：「有緣。」他遞來一面小銅鏡。「此物能照人心，遇敵時心念一動，便知對方弱點所在。」他說罷，閉目如初，不再言語。",
         "constable": "老道士半晌後才緩緩睜眼，深深看了你一眼，點頭道：「有緣。」他遞來一枚刻有「天罰」二字的令牌。「你我皆是奉命行事。此令，可助你一臂之力。」他說罷，閉目如初，不再言語。",
-        "taoist": "老道士半晌後才緩緩睜眼，與你對視片刻，忽然笑了：「師出同門，緣分不淺啊。」他從懷中取出一枚符文銅錢，放在你掌中。「前路兇險，這個，你比我更需要。願它護你周全。」"
+        "taoist":    "老道士半晌後才緩緩睜眼，與你對視片刻，忽然笑了：「師出同門，緣分不淺啊。」他從懷中取出一枚符文銅錢，放在你掌中。「前路兇險，這個，你比我更需要。願它護你周全。」"
       },
       "history_flag": "met_temple_elder",
       "choices": [
@@ -89,7 +99,7 @@
     "act1_temple_rest": {
       "type": "event",
       "title": "靜夜小憩",
-      "text": "你在廟角找了個乾淨的地方躺下，老道士也不理你，自顧打坐。寒夜裡，廟中竟有幾分溫意。你睡得意外地熟，一覺醒來精神煥發，連昨日的傷痛也淡了幾分。",
+      "text": "你在廟角找了個乾淨的地方躺下，老道士也不理你，自顧打坐。寒夜裡，廟中竟有幾分溫意。你睡得意外地熟，一覺醒來精神煥發。",
       "event_type": "heal",
       "heal_pct": 30,
       "next": "__act2__"
@@ -105,10 +115,27 @@
       ]
     },
 
+    "act1_provocation_fight": {
+      "type": "combat",
+      "combat_id": "wandering_master",
+      "next_win": "act1_provocation_win",
+      "next_escape": "act1_temple_rest",
+      "history_flag": "provoked_temple_elder"
+    },
+
+    "act1_provocation_win": {
+      "type": "event",
+      "title": "以武論道",
+      "text": "老者倒退三步，目光中終於有了變化。他緩緩搖頭，但嘴角帶著一絲難以察覺的讚許：「年輕人，你的勁道出乎意料。」他從袖中取出一卷殘本，擲給你，轉身重回蒲團。這一場較量，讓你得到了遠比問路更多的東西。",
+      "event_type": "card_reward",
+      "pick_from": 3,
+      "next": "__act2__"
+    },
+
     "act1_road": {
       "type": "story",
       "title": "第一章・山道奇遇",
-      "text": "山路蜿蜒，行人稀少。你忽然看見路邊倒著一名衣衫凌亂的旅人，胸前帶傷，呼吸急促。他見到你，艱難地抬起頭：「求……求你，我有要事……有人追殺我……」話音未落，四周灌木叢中現出三道黑影，手中各持利刃。",
+      "text": "山路蜿蜒，行人稀少。你忽然看見路邊倒著一名衣衫凌亂的旅人，胸前帶傷，呼吸急促。他見到你，艱難地抬起頭：「求……求你，我有要事……有人追殺我……」話音未落，四周灌木叢中現出三道黑影。",
       "choices": [
         {"text": "幫他！擋住追兵", "next": "act1_road_fight"},
         {"text": "先問清楚再說", "next": "act1_road_question"},
@@ -127,7 +154,7 @@
     "act1_road_rescued": {
       "type": "story",
       "title": "俠義之心",
-      "text": "山賊落荒而逃。旅人掙扎著坐起，望著你的眼神充滿感激。他從懷中摸出一個布包，顫抖著雙手塞給你：「這是我的家傳之物，今日若不是你，性命不保。你收著，算是我的謝禮，也是我的心意。」",
+      "text": "山賊落荒而逃。旅人掙扎著坐起，望著你的眼神充滿感激。他從懷中摸出一個布包，顫抖著雙手塞給你：「這是我的家傳之物，今日若不是你，性命不保。你收著吧。」",
       "history_flag": "saved_traveler",
       "choices": [
         {"text": "道謝，收下布包，繼續趕路", "next": "act1_reward"}
@@ -137,10 +164,10 @@
     "act1_road_question": {
       "type": "story",
       "title": "問清來龍去脈",
-      "text": "旅人焦急地環顧四周，壓低聲音告訴你，他攜有一份關鍵文書，牽涉到近日江湖動盪的幕後黑手。就在你們交談之際，追兵的腳步聲已近在咫尺。不管如何，你必須做個決定。",
+      "text": "旅人焦急地環顧四周，壓低聲音告訴你，他攜有一份關鍵文書，牽涉到近日江湖動盪的幕後黑手。就在你們交談之際，追兵的腳步聲已近在咫尺。",
       "class_text": {
         "constable": "旅人焦急地環顧四周，壓低聲音告訴你，他攜有一份關鍵文書，牽涉到近日江湖動盪的幕後黑手。你眼神一凜——這份文書，正是上司讓你尋找的線索。你當機立斷，亮出腰牌：「官府辦案，山賊退開！」追兵一愣，但仍蜂擁而上。",
-        "taoist": "旅人焦急地環顧四周，壓低聲音告訴你，他攜有一份關鍵文書，牽涉到近日江湖動盪的幕後黑手。你閉目感應片刻，感覺到他身上有一股奇特的靈氣波動——他攜帶的，恐怕不是普通文書。不管如何，此人值得相救。"
+        "taoist":    "旅人焦急地環顧四周，壓低聲音告訴你，他攜有一份關鍵文書，牽涉到近日江湖動盪的幕後黑手。你閉目感應片刻，感覺到他身上有一股奇特的靈氣波動——他攜帶的，恐怕不是普通文書。不管如何，此人值得相救。"
       },
       "history_flag": "learned_road_secret",
       "choices": [
@@ -153,7 +180,6 @@
       "title": "意外收穫",
       "text": "在這段際遇中，你有所得著。一件新的本事在你心中成形——從中選擇一張牌，加入你的牌庫：",
       "event_type": "card_reward",
-      "card_pool": ["iron_will", "cursed_blade", "divine_luck", "soul_bind", "spirit_burst", "phantom_blade"],
       "pick_from": 3,
       "next": "__act2__"
     },
@@ -219,7 +245,7 @@
     "act2_ambush_win": {
       "type": "story",
       "title": "以一當眾",
-      "text": "山賊四散，頭目狼狽逃竄。你稍作喘息，忽然發現地上有個破舊的包袱——這應是他們劫來的財物，其中夾著幾本殘缺的秘笈，字跡潦草卻頗有門道。",
+      "text": "山賊四散，頭目狼狽逃竄。你稍作喘息，忽然發現地上有個破舊的包袱——其中夾著幾本殘缺的秘笈，字跡潦草卻頗有門道。",
       "history_flag": "defeated_ambush",
       "choices": [
         {"text": "翻撿一番，繼續趕路", "next": "act2_crossroads"}
@@ -229,7 +255,7 @@
     "act2_ambush_escape": {
       "type": "event",
       "title": "虛晃一招",
-      "text": "你拋出一物製造聲響，趁伏兵錯愕的瞬間，一口氣衝出了包圍圈。跑出一段路後，你扶著樹幹大口喘氣——今日算是命大。略作調息，傷勢稍減。",
+      "text": "你拋出一物製造聲響，趁伏兵錯愕的瞬間，一口氣衝出了包圍圈。略作調息，傷勢稍減。",
       "event_type": "heal",
       "heal_pct": 10,
       "next": "act2_crossroads"
@@ -238,7 +264,7 @@
     "act2_ambush_bluff": {
       "type": "story",
       "title": "虎威",
-      "text": "你環顧四周，朗聲道：「識相的，給我讓路。」山賊們面面相覷，沒想到你這麼淡定。就在氣氛僵持之際，你趁機大步向前，對方竟真的讓出了一條路——有時候，氣勢就是最強的武器。",
+      "text": "你環顧四周，朗聲道：「識相的，給我讓路。」山賊們面面相覷，沒想到你這麼淡定。你趁機大步向前，對方竟真的讓出了一條路——有時候，氣勢就是最強的武器。",
       "history_flag": "bluffed_ambush",
       "choices": [
         {"text": "頭也不回地走過去", "next": "act2_crossroads"}
@@ -252,6 +278,7 @@
       "choices": [
         {"text": "詢問攤上的物品（代價：損失15%生命）", "next": "act2_merchant_browse"},
         {"text": "以靈力探查其來歷", "next": "act2_merchant_spirit", "condition": {"stat": "spirit", "min": 18}},
+        {"text": "強迫老者說出他真正知道的", "next": "act2_merchant_force", "condition": {"stat": "strength", "min": 25}},
         {"text": "買賣不成仁義在，告辭", "next": "act2_crossroads"}
       ]
     },
@@ -262,7 +289,6 @@
       "text": "商人從攤上拿起三件物品，一一展示。「各有奇效，各取所需。不過老夫的規矩——以傷換寶。」他說完，攤開手。你咬牙，伸出手，一道奇異的力量抽走了你部分元氣。",
       "event_type": "card_reward_cost",
       "cost_hp_pct": 15,
-      "card_pool": ["iron_will", "cursed_blade", "divine_luck", "soul_bind", "spirit_burst", "phantom_blade"],
       "pick_from": 3,
       "next": "act2_crossroads"
     },
@@ -282,7 +308,23 @@
       "title": "無償饋贈",
       "text": "虛影遞來一件閃著靈光的物品，放入你手中後悄然消散，只留下一陣清風。",
       "event_type": "card_reward",
-      "card_pool": ["spirit_burst", "soul_bind", "divine_luck", "phantom_blade"],
+      "pick_from": 3,
+      "next": "act2_crossroads"
+    },
+
+    "act2_merchant_force": {
+      "type": "combat",
+      "combat_id": "wandering_master",
+      "next_win": "act2_merchant_force_win",
+      "next_escape": "act2_crossroads",
+      "history_flag": "forced_merchant"
+    },
+
+    "act2_merchant_force_win": {
+      "type": "event",
+      "title": "強取秘聞",
+      "text": "「老者」笑意不減，卻終於站起身。你們短暫交手，他敗退半步，搖頭道：「好，好。你的手段我認了。」他從袖中取出一個錦囊，扔給你，隨即整個人如煙消散。錦囊裡裝著他不曾對任何人說的東西。",
+      "event_type": "card_reward",
       "pick_from": 3,
       "next": "act2_crossroads"
     },
@@ -292,8 +334,8 @@
       "title": "十字路口",
       "text": "你駐足在三岔路口。前方通向目的地，但據你所知，那裡可能比想象中危險得多。路旁有個老農正在收割，見你停步，招招手：「後生，這條路不好走啊。山上的事，不是一般人能插手的。」",
       "class_text": {
-        "taoist": "你駐足在三岔路口，掐指一算，卦象不明。前方通向目的地，山上邪氣彌漫——但你的師命在此，退路早已斷絕。路旁有個老農見你停步，搖頭道：「後生，這條路不好走啊。」你笑了笑：「走過才知道。」",
-        "beggar": "你駐足在三岔路口，拍了拍空空的口袋。前方或許有危險，但也或許有機遇——你這一輩子，走的都是這種路。路旁有個老農見你停步，歎了口氣：「後生，那條路不好走啊。」你聳了聳肩：「哪條路好走過？」",
+        "taoist":    "你駐足在三岔路口，掐指一算，卦象不明。前方通向目的地，山上邪氣彌漫——但你的師命在此，退路早已斷絕。路旁有個老農見你停步，搖頭道：「後生，這條路不好走啊。」你笑了笑：「走過才知道。」",
+        "beggar":    "你駐足在三岔路口，拍了拍空空的口袋。前方或許有危險，但也或許有機遇——你這一輩子，走的都是這種路。路旁有個老農見你停步，歎了口氣：「後生，那條路不好走啊。」你聳了聳肩：「哪條路好走過？」",
         "constable": "你駐足在三岔路口，拿出文書看了看。前方就是目標所在，退縮不是捕快的作風。路旁有個老農見你停步，嘀咕道：「連官差都來了，這回是真的大事。」你整了整腰牌，邁步向前。",
         "courtesan": "你駐足在三岔路口，輕撫著袖中那封密信。前方的答案就在那裡，這趟路你無論如何都要走完。路旁有個老農見你停步，吃驚道：「哎，你這位姑娘，前面可危險哩。」你淡淡一笑：「危險的事，我見得多了。」"
       },
@@ -318,7 +360,7 @@
       "type": "combat",
       "title": "第三章・絕頂對決",
       "combat_id": "sorcerer",
-      "next_win": "__ending__",
+      "next_win": "__act4__",
       "next_escape": "ending_escape",
       "history_flag": "faced_sorcerer_front"
     },
@@ -327,35 +369,1110 @@
       "type": "combat",
       "title": "第三章・廢墟之戰",
       "combat_id": "guard",
-      "next_win": "__ending__",
+      "next_win": "__act4__",
       "next_escape": "ending_escape",
       "history_flag": "fought_ruins_guard"
     },
 
-    "ending_glory": {
-      "type": "ending",
-      "title": "名揚天下"
+    "act4_village": {
+      "type": "story",
+      "title": "第四章・瘟疫村落",
+      "text": "你走進一座沉默的村莊。家家戶戶門窗緊閉，偶有孩童從門縫偷窺，又飛快縮回。村口的老婦人攔住你：「外鄉人，這裡不太平。村中有怪病，已有數人倒下，聽說是有什麼邪祟作怪。」她眼神中帶著絕望，也帶著一絲希望。",
+      "choices": [
+        {"text": "留下來幫忙，探查原因", "next": "act4_village_help"},
+        {"text": "這裡太危險，快速離開", "next": "act4_village_leave"},
+        {"text": "以靈力感知邪氣源頭", "next": "act4_village_spirit", "condition": {"stat": "spirit", "min": 20}}
+      ]
     },
-    "ending_immortal": {
-      "type": "ending",
-      "title": "羽化登仙"
+
+    "act4_village_help": {
+      "type": "combat",
+      "combat_id": "bandit",
+      "next_win": "act4_village_saved",
+      "next_escape": "act4_village_leave",
+      "history_flag": "fought_village_threat"
     },
-    "ending_survivor": {
-      "type": "ending",
-      "title": "功成身退"
+
+    "act4_village_saved": {
+      "type": "event",
+      "title": "解救村落",
+      "text": "威脅解除，村民陸續從屋中走出。老婦人眼含熱淚，將一個舊布包塞入你手中：「這是我家傳的東西，今日就送給你了，感謝你的義舉。」你稍作歇息，傷勢有所好轉。",
+      "event_type": "heal",
+      "heal_pct": 20,
+      "next": "__act5__"
     },
-    "ending_sacrifice": {
-      "type": "ending",
-      "title": "英雄犧牲"
+
+    "act4_village_leave": {
+      "type": "story",
+      "title": "匆匆離去",
+      "text": "你加快腳步，穿過村莊。身後老婦人的呼喚聲漸漸遠去。有時候，旅途容不下你停下來——你告訴自己這樣說。但那絕望的眼神，在你腦海中久久不散。",
+      "choices": [
+        {"text": "繼續前行", "next": "__act5__"}
+      ]
     },
-    "ending_escape": {
-      "type": "ending",
-      "title": "浪跡天涯"
+
+    "act4_village_spirit": {
+      "type": "story",
+      "title": "靈感追蹤",
+      "text": "你閉目感應，靈力如觸手一般伸向四方。邪氣的氣息清晰可辨——不是疾病，是有人刻意施法，製造混亂。那股氣息……精於無形手段，善於布局謀算。\n\n【線索】：你的對手擅長不動聲色地操控局面。",
+      "history_flag": "clue_schemer",
+      "choices": [
+        {"text": "記下這個線索，繼續追查", "next": "act4_village_help"}
+      ]
     },
-    "ending_underdog": {
-      "type": "ending",
-      "title": "絕地翻盤"
-    }
+
+    "act4_monastery": {
+      "type": "story",
+      "title": "第四章・破廟求道",
+      "text": "山腰上有一座半廢的寺廟，鐘聲寥落。一名孤僧在院中掃葉，見你到來，停下來打量你片刻：「施主面色有異，像是剛從生死邊緣走過來的人。」他若有所思地看著你。",
+      "choices": [
+        {"text": "向僧人請教前路", "next": "act4_monastery_ask"},
+        {"text": "請求在此歇息片刻", "next": "act4_monastery_rest"},
+        {"text": "詢問他是否見過可疑之人", "next": "act4_monastery_clue"},
+        {"text": "以武切磋，探探他的修為", "next": "act4_monastery_fight", "condition": {"stat": "strength", "min": 18}}
+      ]
+    },
+
+    "act4_monastery_ask": {
+      "type": "story",
+      "title": "禪機一問",
+      "text": "僧人緩緩道：「前路如霧，不問終點，只問當下。施主所求之物，或許近在眼前，或許就是你自己。」他指了指廟後的小徑：「從那裡走，或可省去不少麻煩。」",
+      "choices": [
+        {"text": "謝過，沿小徑前行", "next": "__act5__"}
+      ]
+    },
+
+    "act4_monastery_rest": {
+      "type": "event",
+      "title": "片刻清寧",
+      "text": "僧人引你入禪房，端來一碗清茶。寺中靜謐，只有風過松林的聲音。你坐下來，閉目片刻，心中的紛亂漸漸平息。離去時，傷痛也輕了幾分。",
+      "event_type": "heal",
+      "heal_pct": 25,
+      "next": "__act5__"
+    },
+
+    "act4_monastery_clue": {
+      "type": "story",
+      "title": "僧人的目擊",
+      "text": "僧人皺起眉頭，緩緩點頭：「確實有人路過。」他描述：「那人身形如煙，走路幾乎沒有聲音，腳步落地卻不帶一絲塵土。我與他對視片刻，那眼神……如刀。」\n\n【線索】：一個行跡飄忽、身手極為敏捷的殺手，在此區域活動。",
+      "history_flag": "clue_assassin",
+      "choices": [
+        {"text": "謹記在心，告辭", "next": "__act5__"}
+      ]
+    },
+
+    "act4_monastery_fight": {
+      "type": "combat",
+      "combat_id": "wandering_master",
+      "next_win": "act4_monastery_fight_win",
+      "next_escape": "act4_monastery_rest",
+      "history_flag": "challenged_monk"
+    },
+
+    "act4_monastery_fight_win": {
+      "type": "event",
+      "title": "武僧傳藝",
+      "text": "三招過後，僧人收掌，臉上浮現出真誠的笑容：「施主好身手。老衲輸了。」他領你入禪房，不說什麼大道理，只是靜靜地在你的掌心寫下幾個字——那是一套你從未見過的招式根骨。你感覺到某種力量在體內悄然成形。",
+      "event_type": "card_reward",
+      "pick_from": 3,
+      "next": "__act5__"
+    },
+
+    "act4_swamp": {
+      "type": "story",
+      "title": "第四章・毒沼迷途",
+      "text": "前路有一片泥沼，霧氣濃重，辨不清方向。你踩著石頭小心前進，卻忽然發現石頭在動——那不是石頭，是一塊塊露出水面的龜背。一隻巨大的沼澤鱷從霧中現身，緩緩朝你逼近。",
+      "choices": [
+        {"text": "正面迎戰", "next": "act4_swamp_fight"},
+        {"text": "繞道而行（消耗體力）", "next": "act4_swamp_detour"},
+        {"text": "以食物誘開它", "next": "act4_swamp_trick", "condition": {"stat": "luck", "min": 25}}
+      ]
+    },
+
+    "act4_swamp_fight": {
+      "type": "combat",
+      "combat_id": "guard",
+      "next_win": "act4_swamp_won",
+      "next_escape": "act4_swamp_detour",
+      "history_flag": "fought_swamp_beast"
+    },
+
+    "act4_swamp_won": {
+      "type": "story",
+      "title": "沼澤征服者",
+      "text": "巨鱷翻身，沉入沼底。你抹去臉上的汙泥，繼續前行。",
+      "history_flag": "defeated_swamp_beast",
+      "choices": [
+        {"text": "繼續前行", "next": "__act5__"}
+      ]
+    },
+
+    "act4_swamp_detour": {
+      "type": "event",
+      "title": "繞道而行",
+      "text": "你繞了很長一段路，雙腳陷入爛泥，衣衫盡濕。等你終於走出沼澤，已是氣力大損。但至少，你安全了。",
+      "event_type": "heal",
+      "heal_pct": -10,
+      "next": "__act5__"
+    },
+
+    "act4_swamp_trick": {
+      "type": "event",
+      "title": "聲東擊西",
+      "text": "你拿出隨身的乾糧，扔向遠處。巨鱷被食物氣息吸引，緩緩轉頭——就在那一瞬間，你輕手輕腳地繞了過去。運氣，永遠是你最可靠的朋友。",
+      "event_type": "heal",
+      "heal_pct": 5,
+      "next": "__act5__"
+    },
+
+    "act5_cave": {
+      "type": "story",
+      "title": "第五章・妖洞奇遇",
+      "text": "山崖下有一個幽深的石洞，入口刻著奇異的紋路。一股涼意從洞中湧出，但同時也有淡淡的靈氣波動。洞口有一個孩童，坐在那裡哭泣，抬頭見你，撲過來抓住你的衣角：「叔叔阿姨，我迷路了，裡面有個奇怪的老爺爺……」",
+      "choices": [
+        {"text": "帶孩子進去找那個老爺爺", "next": "act5_cave_enter"},
+        {"text": "先安撫孩子，再決定", "next": "act5_cave_comfort", "condition": {"stat": "social", "min": 15}},
+        {"text": "感覺不對勁，繞開這個洞穴", "next": "__act6__"}
+      ]
+    },
+
+    "act5_cave_enter": {
+      "type": "combat",
+      "combat_id": "sorcerer",
+      "next_win": "act5_cave_won",
+      "next_escape": "__act6__",
+      "history_flag": "fought_cave_sorcerer"
+    },
+
+    "act5_cave_won": {
+      "type": "event",
+      "title": "洞中秘寶",
+      "text": "那「老爺爺」現了原形，是一頭修煉已久的妖物。你將其擊退，洞中隨之現出一道靈光——那是妖物藏匿多年的寶物，現在歸你了。孩童安全地跑開，回頭向你揮手。",
+      "event_type": "card_reward",
+      "pick_from": 3,
+      "next": "__act6__"
+    },
+
+    "act5_cave_comfort": {
+      "type": "story",
+      "title": "安撫孩童",
+      "text": "你蹲下來，輕聲問孩子那老爺爺的模樣。孩子想了想，描述道：「他一直坐著不動，手裡有個骷髏骰子，說什麼『天數已定，爾等難逃』……」你心頭一凜，這絕對不是普通老人。\n\n【線索】：一個精通占算、以「天數」自居的謀算者正在此地活動。",
+      "history_flag": "clue_schemer",
+      "choices": [
+        {"text": "叫孩子躲好，你去探個究竟", "next": "act5_cave_enter"}
+      ]
+    },
+
+    "act5_bridge": {
+      "type": "story",
+      "title": "第五章・斷橋廝殺",
+      "text": "前方一道峽谷，一座木橋橫跨其上。橋的中央站著一個人，手持雙刀，身形修長，背對你而立。他聽到腳步聲，緩緩轉過頭，嘴角帶著一抹冷笑：「我等你很久了。」",
+      "choices": [
+        {"text": "迎上去，正面對決", "next": "act5_bridge_fight"},
+        {"text": "問他是誰派來的", "next": "act5_bridge_question"},
+        {"text": "尋找橋下是否有其他路", "next": "act5_bridge_escape", "condition": {"stat": "luck", "min": 22}}
+      ]
+    },
+
+    "act5_bridge_fight": {
+      "type": "combat",
+      "combat_id": "guard",
+      "next_win": "act5_bridge_won",
+      "next_escape": "__act6__",
+      "history_flag": "fought_bridge_guard"
+    },
+
+    "act5_bridge_won": {
+      "type": "story",
+      "title": "橋上勝負",
+      "text": "刺客緩緩倒下。你站在橋中央，望著那消失的身影，心頭有些沉。從他的裝束看，是個職業殺手。究竟是誰知道你在這裡？",
+      "history_flag": "defeated_bridge_assassin",
+      "choices": [
+        {"text": "繼續前行，不去多想", "next": "__act6__"}
+      ]
+    },
+
+    "act5_bridge_question": {
+      "type": "story",
+      "title": "問出秘密",
+      "text": "刺客冷笑道：「說了你也不知道是誰。」你步步逼近，他稍稍退了退，然後突然出手。纏鬥間，他咬牙道：「……是那個沒有影子的人。」隨後就不再多說，奮力一搏。\n\n【線索】：有一個「沒有影子」的存在在操縱局勢——身形如幽靈，殺人於無形。",
+      "history_flag": "clue_assassin",
+      "choices": [
+        {"text": "繼續戰鬥", "next": "act5_bridge_fight"}
+      ]
+    },
+
+    "act5_bridge_escape": {
+      "type": "event",
+      "title": "懸崖另道",
+      "text": "你發現橋下有條隱秘的石階，順著峽谷壁面延伸下去，繞過了橋上的刺客。這需要些運氣——而你剛好有。",
+      "event_type": "heal",
+      "heal_pct": 10,
+      "next": "__act6__"
+    },
+
+    "act5_valley": {
+      "type": "story",
+      "title": "第五章・幽谷線索",
+      "text": "一條幽靜的山谷，溪水潺潺。你在溪邊洗臉，忽然聽到上游傳來聲音——一個蒙面人正蹲在溪邊，似乎在查看什麼。他感覺到你的存在，抬起頭，眼神戒備，然後緩緩站起身。",
+      "choices": [
+        {"text": "上前詢問，態度和善", "next": "act5_valley_talk", "condition": {"stat": "social", "min": 18}},
+        {"text": "保持距離，觀察對方", "next": "act5_valley_watch"},
+        {"text": "突然出手，先下手為強", "next": "act5_valley_attack"}
+      ]
+    },
+
+    "act5_valley_talk": {
+      "type": "story",
+      "title": "神秘情報人",
+      "text": "那人警惕地退後一步，但見你並無惡意，稍稍放鬆了戒備。他低聲道：「你是去對付那個傢伙的吧。我給你個提示——他對血有特殊的執念，戰鬥中會不斷汲取生命之力。越是傷重，他恢復得越快。」\n\n【線索】：敵人以血為力量，自我回復能力極強。消耗戰對你不利，需要快速解決。",
+      "history_flag": "clue_shaman",
+      "choices": [
+        {"text": "記下這個線索，道謝離去", "next": "__act6__"}
+      ]
+    },
+
+    "act5_valley_watch": {
+      "type": "story",
+      "title": "靜觀其變",
+      "text": "你躲在岩石後觀察。那人在溪邊查看什麼痕跡，喃喃自語，聲音太小聽不清楚。片刻後，他起身離去，消失在山谷深處。你走近查看他剛才蹲守的地方——地上有血跡，還有一個奇怪的符文。",
+      "choices": [
+        {"text": "記下符文，繼續前進", "next": "__act6__"}
+      ]
+    },
+
+    "act5_valley_attack": {
+      "type": "combat",
+      "combat_id": "bandit",
+      "next_win": "act5_valley_loot",
+      "next_escape": "__act6__",
+      "history_flag": "fought_valley_stranger"
+    },
+
+    "act5_valley_loot": {
+      "type": "event",
+      "title": "戰利品",
+      "text": "那人武藝不俗，但仍不是你的對手。他落敗逃走，留下了一個行囊。你翻開一看，裡面有些有用的東西。",
+      "event_type": "card_reward",
+      "pick_from": 2,
+      "next": "__act6__"
+    },
+
+    "act6_city": {
+      "type": "story",
+      "title": "第六章・古城往事",
+      "text": "你走進一座古老的城鎮，街道上人來人往，卻有一種壓抑的氣氛。一名老說書人坐在茶館角落，聲音蒼老卻清晰，正說著一個故事——關於一個隱藏在幕後的強大存在，如何一步步操控整片江湖。他的眼睛，直直地看向你。",
+      "choices": [
+        {"text": "坐下來聽他說完", "next": "act6_city_listen"},
+        {"text": "走上前，問他是否認識你", "next": "act6_city_confront", "condition": {"stat": "social", "min": 20}},
+        {"text": "這裡氣氛不對，繼續趕路", "next": "act6_crossroads"}
+      ]
+    },
+
+    "act6_city_listen": {
+      "type": "story",
+      "title": "說書人的故事",
+      "text": "老說書人的故事講到最後，忽然壓低聲音，直視著你說：「後生，你此行的終點，是個不好對付的傢伙。老夫給你一句話：知己知彼，百戰不殆。你收集到的線索，都是真的。」\n他站起身，扔給你一個錦囊，然後在人群中消失了。",
+      "history_flag": "received_elder_guidance",
+      "choices": [
+        {"text": "打開錦囊，繼續前行", "next": "act6_city_reward"}
+      ]
+    },
+
+    "act6_city_reward": {
+      "type": "event",
+      "title": "錦囊妙計",
+      "text": "錦囊裡有一張紙條，寫著：「勝在準備，敗在輕敵。」紙條下面，還有一件珍稀的寶物。",
+      "event_type": "card_reward",
+      "pick_from": 3,
+      "next": "act6_crossroads"
+    },
+
+    "act6_city_confront": {
+      "type": "story",
+      "title": "正面詢問",
+      "text": "老說書人見你走來，並不驚訝，只是輕輕點頭：「我知道你會來的。」他告訴你，他曾親眼見過你的對手——不是在戰場上，而是在棋盤前。「那個人，把整個江湖當成棋局。但棋局有破解之法，只要落子之前，先看清楚他的習慣。」",
+      "history_flag": "received_elder_guidance",
+      "choices": [
+        {"text": "謝過老人，繼續前行", "next": "act6_crossroads"}
+      ]
+    },
+
+    "act6_grave": {
+      "type": "story",
+      "title": "第六章・荒冢遺物",
+      "text": "荒野中有一片古老的墓地，石碑上的字跡大多已被風化。你在其中一塊石碑前停下——碑上刻著的名字，和你此行要對付的敵人有些關聯。碑前有一個布包，像是有人特意留在此處的。",
+      "choices": [
+        {"text": "打開布包查看", "next": "act6_grave_open"},
+        {"text": "在碑前默哀片刻", "next": "act6_grave_respect"},
+        {"text": "感覺此地陰氣過重，快步離去", "next": "act6_crossroads"}
+      ]
+    },
+
+    "act6_grave_open": {
+      "type": "event",
+      "title": "前人遺物",
+      "text": "布包裡有一封殘缺的信，和一件武器或法器。信上只剩幾個字：「來者，若能破此局，此物相助。」你收下遺物，默默前行。",
+      "event_type": "card_reward_cost",
+      "cost_hp_pct": 10,
+      "pick_from": 3,
+      "next": "act6_crossroads"
+    },
+
+    "act6_grave_respect": {
+      "type": "event",
+      "title": "肅然起敬",
+      "text": "你在碑前站立片刻，心中有些說不清的感觸。離去時，感覺心頭的雜念少了幾分，整個人也清明了一些。",
+      "event_type": "heal",
+      "heal_pct": 15,
+      "next": "act6_crossroads"
+    },
+
+    "act6_secret": {
+      "type": "story",
+      "title": "第六章・秘境真相",
+      "text": "你在一片奇異的霧氣中迷了路，卻意外走進了一個隱藏的空間——四周靜謐，空氣中有一股說不清的力量。正中央懸浮著一面古鏡，鏡中的影像讓你心頭一震：那是你的對手，正面、清晰地出現在鏡中，就像是鏡子刻意要讓你看見。",
+      "choices": [
+        {"text": "仔細觀察鏡中影像", "next": "act6_secret_observe"},
+        {"text": "打碎這面鏡子", "next": "act6_secret_break"},
+        {"text": "對著鏡中人說話", "next": "act6_secret_speak", "condition": {"stat": "spirit", "min": 25}}
+      ]
+    },
+
+    "act6_secret_observe": {
+      "type": "story",
+      "title": "鏡中真相",
+      "text": "你凝神觀察。鏡中的影像漸漸清晰——你的對手在做什麼，以何種方式戰鬥，他的習慣和弱點，一一呈現。這一刻你完全明白了：你此行要對付的，是什麼樣的存在。\n\n不管他是老謀深算的謀士、來去無蹤的刺客、以血祭祀的巫師，還是陰陽顛倒的邪術師——你都已有了準備。",
+      "history_flag": "saw_boss_in_mirror",
+      "choices": [
+        {"text": "收起心神，奔赴最後的決戰", "next": "act6_crossroads"}
+      ]
+    },
+
+    "act6_secret_break": {
+      "type": "event",
+      "title": "打碎幻象",
+      "text": "你揮拳擊碎古鏡，碎片在空中化為一道靈光，湧入你的體內。碎鏡的能量讓你渾身一振，傷勢奇異地稍有好轉。前路雖未知，但你已不再猶豫。",
+      "event_type": "heal",
+      "heal_pct": 20,
+      "next": "act6_crossroads"
+    },
+
+    "act6_secret_speak": {
+      "type": "story",
+      "title": "隔空對話",
+      "text": "你開口，聲音穿透了鏡面。鏡中的人，竟然也緩緩轉頭。你們隔著一面鏡子，對視片刻。然後，他說了一句話：「來吧，我等了很久。」\n鏡面隨即碎裂，空間恢復平靜。你深吸一口氣，向前走去。",
+      "history_flag": "spoke_to_boss",
+      "choices": [
+        {"text": "赴約，踏向最後的戰場", "next": "act6_crossroads"}
+      ]
+    },
+
+    "act6_crossroads": {
+      "type": "story",
+      "title": "最後的路",
+      "text": "所有的路，都匯聚到了這裡。\n\n前方，就是終點。你整理了一下裝束，回想起這一路走過的每一個選擇，每一場戰鬥，每一個陌生人的臉。不管結局如何，你已走到了這裡。",
+      "class_text": {
+        "beggar":    "你摸了摸空空的衣袖，忽然笑了出來。當初蜷縮在牆根的那個人，大概想不到，有一天會站在這種地方。命運這東西，果然說不準。",
+        "courtesan": "你輕輕撫過袖中的密信，那紙已被摸得起皺。無論最後答案是什麼，至少，你找到了它所在的地方。",
+        "constable": "你拍了拍腰間的捕刀，刀鞘光滑如初。職責所在，從無後退——你告訴自己，今天也不例外。",
+        "taoist":    "你掐指一算，卦象終於明朗。這一路所有的因緣，都在此刻收攏。你長吐一口氣，邁步向前。"
+      },
+      "choices": [
+        {"text": "踏入下一段旅途", "next": "__act7__"}
+      ]
+    },
+
+    "act7_ghost_market": {
+      "type": "story",
+      "title": "第七章・鬼市幽影",
+      "text": "夜半時分，荒野中燈火驟起。傳說中每逢陰月初七才現身的鬼市，就在眼前鋪展開來。攤販們面容模糊，售賣的物品光怪陸離。人群中，一個黑袍身影似乎一直在注視著你。",
+      "choices": [
+        {"text": "向攤販購買奇物（代價：15%生命）", "next": "act7_ghost_market_buy"},
+        {"text": "跟蹤那個黑袍身影", "next": "act7_ghost_market_follow"},
+        {"text": "向攤販打聽幕後黑手的消息", "next": "act7_ghost_market_info", "condition": {"stat": "social", "min": 25}}
+      ]
+    },
+
+    "act7_ghost_market_buy": {
+      "type": "event",
+      "title": "鬼市交易",
+      "text": "你挑了幾樣說不清用途的東西。攤販沉默地接過你手中的一滴鮮血，點了點頭。那些東西在你手中化為一股暖流，融入體內。這地方的規矩，以血換力。",
+      "event_type": "card_reward_cost",
+      "cost_hp_pct": 15,
+      "pick_from": 3,
+      "next": "__act8__"
+    },
+
+    "act7_ghost_market_follow": {
+      "type": "combat",
+      "combat_id": "cult_enforcer",
+      "next_win": "act7_ghost_market_follow_win",
+      "next_escape": "__act8__",
+      "history_flag": "fought_ghost_market_watcher"
+    },
+
+    "act7_ghost_market_follow_win": {
+      "type": "story",
+      "title": "幕後線人",
+      "text": "那黑袍人敗退，跪倒在地，喘著氣說：「我只是……奉命監視……主人說，有個危險的人在向我們靠近。」他從懷中摸出一枚令牌，推到你腳邊：「這個……這個能讓你進入最後的禁地，不被攔截。」\n\n【線索】：敵人已知你的存在，並在追蹤你的行動。",
+      "history_flag": "got_access_token",
+      "choices": [
+        {"text": "收下令牌，繼續前行", "next": "__act8__"}
+      ]
+    },
+
+    "act7_ghost_market_info": {
+      "type": "story",
+      "title": "幽靈情報",
+      "text": "一名面紗遮臉的攤販壓低聲音對你說：「你在找那個人？」她掃視四周，繼續道：「他最近在血祭……用活人的精氣修煉。你去找倖存者，他們知道的，比你想象中多得多。」\n\n【線索】：敵人正在進行血祭儀式，倖存者是重要情報來源。",
+      "history_flag": "clue_blood_ritual",
+      "choices": [
+        {"text": "記下這個線索，繼續前行", "next": "__act8__"}
+      ]
+    },
+
+    "act7_old_hermit": {
+      "type": "story",
+      "title": "第七章・山中隱者",
+      "text": "深山絕壁之上，有一座小屋，幾乎要被藤蔓吞沒。屋門半開，一個頭髮蓬亂的老人坐在門口，削著一根竹竿，頭也不抬地說：「來了。」彷彿早就知道你會出現。",
+      "choices": [
+        {"text": "問他是否知道前路的危機", "next": "act7_hermit_ask"},
+        {"text": "請他傳授你一招保命的本事", "next": "act7_hermit_teach"},
+        {"text": "在此歇息，補充體力", "next": "act7_hermit_rest"}
+      ]
+    },
+
+    "act7_hermit_ask": {
+      "type": "story",
+      "title": "隱者之言",
+      "text": "老人停下手中的動作，仰頭望天，緩緩說：「那個人……我與他打過交道。三十年前，他還是個孩子，卻已有殺氣。他怕的，只有一件事——怕人看穿他的真面目。他的強大，一半來自實力，一半來自旁人的恐懼。」\n\n【線索】：敵人的恐懼外表是他力量的一部分。無所畏懼者，才能看穿他的破綻。",
+      "history_flag": "clue_boss_fear",
+      "choices": [
+        {"text": "謹記在心，繼續前行", "next": "__act8__"}
+      ]
+    },
+
+    "act7_hermit_teach": {
+      "type": "event",
+      "title": "隱者傳技",
+      "text": "老人打量你片刻，點了點頭。「坐。」他只說了一個字，然後開始演示一套動作，動作緩慢，卻暗藏驚人的力道。你跟著練了一遍，汗如雨下，但感覺到身體中有什麼東西被解開了。",
+      "event_type": "card_reward",
+      "pick_from": 3,
+      "next": "__act8__"
+    },
+
+    "act7_hermit_rest": {
+      "type": "event",
+      "title": "深山小憩",
+      "text": "老人什麼都沒問，只是遞給你一碗藥湯。湯水苦澀，但喝下去後，身上的傷痛如退潮般消散。你在茅屋的乾草堆上睡了一覺，醒來時精神大振。",
+      "event_type": "heal",
+      "heal_pct": 35,
+      "next": "__act8__"
+    },
+
+    "act7_pursuit": {
+      "type": "story",
+      "title": "第七章・追殺夜路",
+      "text": "天色剛暗，身後便傳來急促的腳步聲——是黑袍追兵，少說六七人，手持火把，呼喝著你的行蹤。前方是一片廢棄的村落，地形複雜。",
+      "choices": [
+        {"text": "找個制高點，等他們進村再殲滅", "next": "act7_pursuit_fight"},
+        {"text": "利用廢墟迷惑追兵，悄悄脫身", "next": "act7_pursuit_escape", "condition": {"stat": "survival", "min": 20}},
+        {"text": "點燃稻草堆，製造混亂掩護撤退", "next": "act7_pursuit_diversion", "condition": {"stat": "luck", "min": 22}}
+      ]
+    },
+
+    "act7_pursuit_fight": {
+      "type": "combat",
+      "combat_id": "cult_enforcer",
+      "next_win": "act7_pursuit_win",
+      "next_escape": "__act8__",
+      "history_flag": "fought_pursuers"
+    },
+
+    "act7_pursuit_win": {
+      "type": "event",
+      "title": "一網打盡",
+      "text": "追兵全數倒地。你仔細搜查，在領頭人身上找到了一份命令書——上面詳細記載了你的行蹤，和抓捕你的賞金。你撕碎命令書，收下他們身上的財物，繼續趕路。",
+      "event_type": "card_reward",
+      "pick_from": 2,
+      "next": "__act8__"
+    },
+
+    "act7_pursuit_escape": {
+      "type": "event",
+      "title": "巧妙脫身",
+      "text": "你熟悉地利，在廢墟中繞了幾圈，讓追兵的火把越離越遠。等他們的喊聲完全消失，你才停下來，靠著一堵殘牆喘息。冷汗浸透了衣背，但你安全了。",
+      "event_type": "heal",
+      "heal_pct": 10,
+      "next": "__act8__"
+    },
+
+    "act7_pursuit_diversion": {
+      "type": "story",
+      "title": "火海脫身",
+      "text": "乾燥的稻草一點即燃，火光沖天，追兵一片大亂。你趁著混亂，一口氣衝出了包圍。奔跑途中，你發現火光照亮了一個藏在廢井中的木匣——是前人留下的，裡面有些好東西。",
+      "history_flag": "escaped_by_fire",
+      "choices": [
+        {"text": "打開木匣，查看內容物", "next": "act7_pursuit_win"}
+      ]
+    },
+
+    "act8_altar": {
+      "type": "story",
+      "title": "第八章・血祭之地",
+      "text": "你在一處山谷中發現了一座石砌的祭壇，黑色的血跡仍未乾透。壇上擺著幾個奇怪的容器，發出暗紅的光澤。就在你靠近時，三個身著儀式服裝的人從暗處走出，眼神空洞，手持短刀。",
+      "choices": [
+        {"text": "先下手為強，摧毀祭壇", "next": "act8_altar_fight"},
+        {"text": "靠近研究祭壇的構造", "next": "act8_altar_study", "condition": {"stat": "spirit", "min": 22}},
+        {"text": "從他們身上汲取力量（代價：20%生命）", "next": "act8_altar_absorb"}
+      ]
+    },
+
+    "act8_altar_fight": {
+      "type": "combat",
+      "combat_id": "cult_enforcer",
+      "next_win": "act8_altar_win",
+      "next_escape": "__act9__",
+      "history_flag": "destroyed_altar"
+    },
+
+    "act8_altar_win": {
+      "type": "story",
+      "title": "祭壇破除",
+      "text": "儀式人員倒地，你奮力推倒祭壇，石塊轟然崩落。壇中封存的靈氣瞬間釋放，形成一道光柱——那是被祭祀者的怨氣，如今終於得以舒散。光柱消失後，你感覺到某種力量殘留在你的掌心。",
+      "history_flag": "liberated_altar_spirits",
+      "choices": [
+        {"text": "感謝亡者，繼續前行", "next": "__act9__"}
+      ]
+    },
+
+    "act8_altar_study": {
+      "type": "story",
+      "title": "祭壇秘密",
+      "text": "你以靈力細細感應，祭壇的結構開始在你腦中呈現。這不是普通的血祭——這是一個用以追蹤特定目標的儀式。目標，就是你。同時你也發現了它的弱點：一旦施術者被打斷，追蹤便會消散。\n\n【線索】：敵人一直在用祭壇追蹤你的位置，但這個方法有破解之道。",
+      "history_flag": "clue_tracking_ritual",
+      "choices": [
+        {"text": "摧毀祭壇，斷絕追蹤", "next": "act8_altar_fight"}
+      ]
+    },
+
+    "act8_altar_absorb": {
+      "type": "event",
+      "title": "汲取怨力",
+      "text": "你深吸一口氣，將手按在祭壇核心。那股陰沉的力量湧入體內，如同吞下一塊燒紅的鐵——灼痛中，卻有一種奇異的蓬勃。代價是真實的，但得到的也是真實的。",
+      "event_type": "card_reward_cost",
+      "cost_hp_pct": 20,
+      "pick_from": 3,
+      "next": "__act9__"
+    },
+
+    "act8_survivors": {
+      "type": "story",
+      "title": "第八章・倖存者",
+      "text": "廢棄的農舍後面，藏著一群衣衫襤褸的人。他們見到你，先是驚慌，一個老者攔住了試圖逃跑的年輕人：「等等，這人不是他們的人。」他望向你，眼中有謹慎，也有期盼：「你……是來找那個人的嗎？」",
+      "choices": [
+        {"text": "向他們問清楚敵人的情況", "next": "act8_survivors_ask"},
+        {"text": "先幫助他們療傷，再詢問", "next": "act8_survivors_heal", "condition": {"stat": "social", "min": 18}},
+        {"text": "告訴他們你會解決這件事", "next": "act8_survivors_promise"}
+      ]
+    },
+
+    "act8_survivors_ask": {
+      "type": "story",
+      "title": "倖存者的證詞",
+      "text": "老者斷斷續續地說：「他每隔七天就來一次……帶走幾個人，說是『選中』了他們。被帶走的，沒有一個回來。但是……」他壓低聲音，「他有個習慣——每次到來之前，天空都會出現一種奇怪的鳥。像是先遣哨探。若是殺了那隻鳥，他的法術就會有片刻的破綻。」\n\n【線索】：敵人的儀式有固定前兆，可以利用這個破綻發動奇襲。",
+      "history_flag": "clue_ritual_pattern",
+      "choices": [
+        {"text": "記下這個線索，向他們告辭", "next": "__act9__"}
+      ]
+    },
+
+    "act8_survivors_heal": {
+      "type": "event",
+      "title": "共度難關",
+      "text": "你拿出隨身的藥草，為傷者包紮。老者感激地握著你的手，把知道的一切都告訴了你，還把他們藏起來的最後一點存糧分給你。「去吧，替我們所有人，出一口氣。」\n你感覺到他們的信念，像是一股暖流，讓你的傷痛也輕了幾分。",
+      "event_type": "heal",
+      "heal_pct": 25,
+      "next": "__act9__"
+    },
+
+    "act8_survivors_promise": {
+      "type": "story",
+      "title": "一諾千金",
+      "text": "你對他們說：「我會回來的。」\n一個孩子從人群中擠出來，把一塊用繩子穿著的石頭塞進你手裡：「這是我爸爸留給我的，他說這個能帶來好運。你拿去。」\n老者眼眶紅了，從袖中取出一個布包：「這裡有你可能用到的東西，是我保存的最後一點好貨。」",
+      "history_flag": "promised_survivors",
+      "choices": [
+        {"text": "收下布包，踏上前路", "next": "act8_survivors_heal"}
+      ]
+    },
+
+    "act8_spy": {
+      "type": "story",
+      "title": "第八章・臥底現形",
+      "text": "你在一間廢棄的驛站短暫歇腳，卻察覺到窗邊有個黑影——他以為你沒發現，正悄悄向外傳遞信號。你快步上前，在他逃跑之前抓住了他的衣領。他是個年輕人，臉上滿是驚恐。",
+      "choices": [
+        {"text": "嚴厲審問，逼他說出底細", "next": "act8_spy_interrogate"},
+        {"text": "以利誘之，讓他倒戈", "next": "act8_spy_recruit", "condition": {"stat": "social", "min": 22}},
+        {"text": "直接與他戰鬥，奪取情報", "next": "act8_spy_fight"}
+      ]
+    },
+
+    "act8_spy_interrogate": {
+      "type": "story",
+      "title": "審問",
+      "text": "在你凌厲的氣勢下，年輕人很快就崩潰了。他說：「主人……主人在城裡有一個秘密據點，在……在北邊廢棄的鑄鐵廠地下。他把最重要的東西都放在那裡。我知道入口的暗語。」說完，他閉上眼睛，像是在等待審判。\n\n【線索】：敵人在北方廢棄鑄鐵廠地下設有秘密據點。",
+      "history_flag": "clue_secret_base",
+      "choices": [
+        {"text": "記下線索，讓他離開", "next": "__act9__"},
+        {"text": "把他帶上，作為嚮導", "next": "__act9__"}
+      ]
+    },
+
+    "act8_spy_recruit": {
+      "type": "story",
+      "title": "策反",
+      "text": "你告訴他，跟著一個殘害無辜的人不會有好下場。年輕人沉默了很久，最後說：「……我也不想做這些。我只是走投無路。」他從懷中取出一個皮質手册，遞給你：「這裡面有他近期的行動計劃，和幾個關鍵人員的名單。你拿去吧。」",
+      "history_flag": "recruited_spy",
+      "choices": [
+        {"text": "接過手册，告訴他如何自保", "next": "__act9__"}
+      ]
+    },
+
+    "act8_spy_fight": {
+      "type": "combat",
+      "combat_id": "guard",
+      "next_win": "act8_spy_win",
+      "next_escape": "__act9__",
+      "history_flag": "fought_spy"
+    },
+
+    "act8_spy_win": {
+      "type": "story",
+      "title": "奪取情報",
+      "text": "那人落敗，跌倒在地。你從他懷中取出一個皮质的手册，翻開一看，裡面密密麻麻地寫著行動計劃和據點位置。情報在手，比什麼都值錢。",
+      "history_flag": "stole_intel",
+      "choices": [
+        {"text": "收好情報，繼續前行", "next": "__act9__"}
+      ]
+    },
+
+    "act9_dark_city": {
+      "type": "story",
+      "title": "第九章・暗影之城",
+      "text": "你踏入一座外表平靜、內裡死寂的城市。街道上的人們神情麻木，眼神空洞，彷彿是行屍走肉。守衛站在路口，盔甲上刻著一個你在別處見過的符文。這裡，已經完全落入敵人的掌控。",
+      "choices": [
+        {"text": "大搖大擺地穿過城市", "next": "act9_city_open", "condition": {"stat": "social", "min": 28}},
+        {"text": "偽裝成城中居民，低調穿行", "next": "act9_city_disguise", "condition": {"stat": "luck", "min": 25}},
+        {"text": "以武力強行突破守衛", "next": "act9_city_fight"}
+      ]
+    },
+
+    "act9_city_open": {
+      "type": "story",
+      "title": "氣吞山河",
+      "text": "你大步向前，毫無掩飾。守衛攔住你，你用一種不容置疑的語氣說了幾句話。守衛愣了愣，竟然讓開了。有時候，最大膽的辦法就是最安全的辦法。你穿過城市，在出口附近，一個趁亂塞給你一個布包的陌生人悄聲道：「謝謝你，繼續走。」",
+      "history_flag": "passed_city_openly",
+      "choices": [
+        {"text": "接過布包，快步離城", "next": "act9_city_reward"}
+      ]
+    },
+
+    "act9_city_disguise": {
+      "type": "story",
+      "title": "混入人群",
+      "text": "你找來一件城中普通人的衣物，低頭縮肩地混入人流。守衛的眼光掃過你，停頓了一下，然後移開了。你屏住呼吸，一步一步穿過了設防的街道。出城那一刻，你才長吐一口氣。",
+      "history_flag": "passed_city_disguised",
+      "choices": [
+        {"text": "繼續前行", "next": "__act10__"}
+      ]
+    },
+
+    "act9_city_fight": {
+      "type": "combat",
+      "combat_id": "cult_enforcer",
+      "next_win": "act9_city_reward",
+      "next_escape": "__act10__",
+      "history_flag": "fought_through_city"
+    },
+
+    "act9_city_reward": {
+      "type": "event",
+      "title": "城中所獲",
+      "text": "你在混亂中或憑藉人情，或憑藉武力，在這死城中得到了一份意外的饋贈。",
+      "event_type": "heal",
+      "heal_pct": 15,
+      "next": "__act10__"
+    },
+
+    "act9_double_cross": {
+      "type": "story",
+      "title": "第九章・背刺",
+      "text": "你在一座廢棄的屋子裡等待約好的情報人。對方準時出現，卻帶來了七八個全副武裝的人。情報人冷冷地看著你：「對不起。懸賞太高了——而你，太難找到了。我等這個機會等了很久。」",
+      "choices": [
+        {"text": "背叛有代價，先把眼前這個解決", "next": "act9_betrayal_fight"},
+        {"text": "問他，是不是還有選擇", "next": "act9_betrayal_talk", "condition": {"stat": "social", "min": 20}},
+        {"text": "假裝投降，伺機反擊", "next": "act9_betrayal_trick", "condition": {"stat": "luck", "min": 20}}
+      ]
+    },
+
+    "act9_betrayal_fight": {
+      "type": "combat",
+      "combat_id": "cult_enforcer",
+      "next_win": "act9_betrayal_win",
+      "next_escape": "__act10__",
+      "history_flag": "survived_betrayal"
+    },
+
+    "act9_betrayal_win": {
+      "type": "story",
+      "title": "代價已付",
+      "text": "雇傭兵四散逃竄。情報人跌坐在地，滿臉是血，抬頭看著你，沒有說話。你沉默地俯身，從他的外衣口袋裡取出了他本來打算賣給你的情報，然後轉身離開。有些人，不值得多說一個字。",
+      "history_flag": "punished_traitor",
+      "choices": [
+        {"text": "帶走情報，繼續前行", "next": "__act10__"}
+      ]
+    },
+
+    "act9_betrayal_talk": {
+      "type": "story",
+      "title": "最後的問",
+      "text": "情報人愣了愣，你繼續說：「那個人……你覺得他會因為你送來我的人頭，就放過你和你的家人嗎？」\n長時間的沉默。然後，他慢慢擺手讓那些雇傭兵退開。「……你說得對。」他抬頭，眼神複雜地看著你，「我把我知道的全部告訴你。但你也得讓我平安離開。」",
+      "history_flag": "convinced_traitor",
+      "choices": [
+        {"text": "答應他，聽他說完", "next": "act9_betrayal_win"}
+      ]
+    },
+
+    "act9_betrayal_trick": {
+      "type": "story",
+      "title": "以彼之道",
+      "text": "你緩緩舉起雙手，假裝配合。情報人鬆了口氣，示意雇傭兵上前——就在他們靠近的一瞬間，你突然動作。混亂中，你先制住情報人，以他作為要挾，逼雇傭兵退開，然後奪取了他懷中的情報，全身而退。",
+      "history_flag": "outtricked_traitor",
+      "choices": [
+        {"text": "帶走情報，繼續前行", "next": "__act10__"}
+      ]
+    },
+
+    "act9_double_cross": {
+      "type": "story",
+      "title": "第九章・背刺",
+      "text": "你在一座廢棄的屋子裡等待約好的情報人。對方準時出現，卻帶來了七八個全副武裝的人。情報人冷冷地看著你：「對不起。懸賞太高了——而你，太難找到了。我等這個機會等了很久。」",
+      "choices": [
+        {"text": "背叛有代價，先把眼前這個解決", "next": "act9_betrayal_fight"},
+        {"text": "問他，是不是還有選擇", "next": "act9_betrayal_talk", "condition": {"stat": "social", "min": 20}},
+        {"text": "假裝投降，伺機反擊", "next": "act9_betrayal_trick", "condition": {"stat": "luck", "min": 20}}
+      ]
+    },
+
+    "act9_champion": {
+      "type": "story",
+      "title": "第九章・幕後大將",
+      "text": "一個高大的身影擋住了你的去路。他不是普通的守衛，從氣勢就能看出來——這是敵人特意派來阻攔你的人。他取下斗笠，看了你一眼：「你比傳說中的更精幹。這倒讓這場戰鬥多了一點意思。」",
+      "choices": [
+        {"text": "直接迎戰", "next": "act9_champion_fight"},
+        {"text": "問他為何效忠那個人", "next": "act9_champion_talk"},
+        {"text": "以超凡的氣勢壓制他的鬥志", "next": "act9_champion_bluff", "condition": {"stat": "strength", "min": 30}}
+      ]
+    },
+
+    "act9_champion_fight": {
+      "type": "combat",
+      "combat_id": "wandering_master",
+      "next_win": "act9_champion_win",
+      "next_escape": "__act10__",
+      "history_flag": "fought_boss_champion"
+    },
+
+    "act9_champion_win": {
+      "type": "event",
+      "title": "強將落敗",
+      "text": "大將緩緩倒地，喘著氣說：「……好。你值得去見他了。」他從腰間解下一枚令牌，推向你：「拿去，他的最後防線，這個令牌有用。」你接過令牌，深深地看了他一眼，然後繼續向前。",
+      "event_type": "card_reward",
+      "pick_from": 3,
+      "next": "__act10__"
+    },
+
+    "act9_champion_talk": {
+      "type": "story",
+      "title": "大將之心",
+      "text": "大將沉默了片刻，然後說：「我欠他一條命。就這麼簡單。」他的眼神裡沒有悔意，也沒有狂熱，只有一種沉甸甸的責任感。「你殺了他，我就要殺你。這是我的道。」\n你點了點頭，沒有多說什麼，拔出武器。",
+      "choices": [
+        {"text": "尊重他的選擇，決一勝負", "next": "act9_champion_fight"}
+      ]
+    },
+
+    "act9_champion_bluff": {
+      "type": "story",
+      "title": "氣壓強敵",
+      "text": "你直視他的眼睛，一步不退。你的氣勢在這一刻達到了頂峰，像是把你走過的每一步路、每一場戰鬥都凝聚於此。大將的眼中出現了一絲動搖——然後，他緩緩收回了手中的武器。「……算你過關。」他讓開了路，卻又補充道：「但我的主人，你未必能過得了。」",
+      "history_flag": "intimidated_champion",
+      "choices": [
+        {"text": "踏過他讓出的路，繼續前行", "next": "__act10__"}
+      ]
+    },
+
+    "act10_alliance": {
+      "type": "story",
+      "title": "第十章・意外盟友",
+      "text": "在你最意想不到的地方，遇見了最意想不到的人——那是你此前旅途中結下的某個緣分，或是同樣受到過敵人迫害的人。他們站在你面前，說：「我們不能讓你一個人去。」",
+      "class_text": {
+        "beggar":    "是那個你曾經救過的旅人，帶來了一群同樣被迫害的流民。他們眼中燃著火，「你給過我們活下去的機會，現在，讓我們給你一個機會。」",
+        "courtesan": "是從前的舊識，幾個同樣在江湖中掙扎求生的女子，各有一身絕技。「我們聽說了你在做的事。」她們彼此交換了眼神，「算我們一份。」",
+        "constable": "是同僚，幾個同樣不滿現狀的捕快和義士。「上頭不管，我們自己管。」領頭的人拍了拍腰刀，「你不是一個人。」",
+        "taoist":    "是師門的師兄弟，他們從山上趕來，帶著師父的叮囑。「師父說，若你到了這一步，我們理應相助。這是師門的責任，也是我們自己的選擇。」"
+      },
+      "choices": [
+        {"text": "接受他們的相助，共同前進", "next": "act10_alliance_accept"},
+        {"text": "感謝他們，但讓他們遠離危險", "next": "act10_alliance_refuse"}
+      ]
+    },
+
+    "act10_alliance_accept": {
+      "type": "event",
+      "title": "並肩同行",
+      "text": "有人同行，感覺不一樣了。他們為你補充了物資，還分享了各自掌握的情報，讓你對前路有了更清晰的判斷。你感覺到力量，不只是身體上的——而是那種知道有人與你同在的力量。",
+      "event_type": "heal",
+      "heal_pct": 30,
+      "next": "__act11__"
+    },
+
+    "act10_alliance_refuse": {
+      "type": "story",
+      "title": "獨行之路",
+      "text": "你婉拒了他們的好意。「這條路，我自己來走。你們好好活著，比什麼都重要。」他們沉默地看著你，最後還是塞給你一個行囊，裡面裝著他們能給的一切。",
+      "history_flag": "refused_alliance",
+      "choices": [
+        {"text": "接過行囊，獨自踏上前路", "next": "act10_alliance_solo"}
+      ]
+    },
+
+    "act10_alliance_solo": {
+      "type": "event",
+      "title": "孤膽英雄",
+      "text": "你一個人走著，行囊裡有他們給的藥草、乾糧，還有一封手寫的短信：「平安歸來。」這三個字，比任何東西都重。",
+      "event_type": "heal",
+      "heal_pct": 15,
+      "next": "__act11__"
+    },
+
+    "act10_revelation": {
+      "type": "story",
+      "title": "第十章・真相揭示",
+      "text": "你終於拼湊出了所有的線索。\n\n那個一直在背後操縱一切的人——他的真實身份，他的動機，他的過去——在這一刻，完整地呈現在你眼前。也許那是一個你意想不到的人，也許那個真相讓你震驚，或悲哀，或憤怒。",
+      "class_text": {
+        "beggar":    "你想起了那塊玉牌，想起了老者遞給你時的眼神。那個人……原來與你的過去有著深刻的牽連。你緊緊握住玉牌，感受著那份溫度，然後放開了手。不管過去如何，前路只有一條。",
+        "courtesan": "密信的最後一頁，你終於看懂了暗語。那個名字，讓你怔住了片刻。然後你緩緩折好密信，收入袖中。有些真相，知道了，就要承擔知道的代價。",
+        "constable": "文書上的最後一個印章，是你認識的人的。你盯著那個印章看了很久，然後把文書放回懷中，拍了拍捕刀。公是公，私是私——但今天，兩者都要了結。",
+        "taoist":    "你掐指推算，所有的卦象在這一刻匯聚，指向同一個答案。那個邪氣的源頭……你閉目片刻，睜開眼時，眼神比任何時候都清明。天道輪迴，因果難逃，你已準備好做那個了結因果的人。"
+      },
+      "history_flag": "learned_boss_identity",
+      "choices": [
+        {"text": "這改變不了任何事——繼續向前", "next": "__act11__"},
+        {"text": "也許還有另一種解決方式", "next": "act10_revelation_mercy", "condition": {"stat": "social", "min": 30}}
+      ]
+    },
+
+    "act10_revelation_mercy": {
+      "type": "story",
+      "title": "另一種可能",
+      "text": "你思考著是否存在另一條路。也許不需要以命換命——也許，那個人的執念是可以解開的。你決定，到了最後，先問一問再說。若有轉機，那是最好；若沒有，你也不會手軟。",
+      "history_flag": "considered_mercy",
+      "choices": [
+        {"text": "帶著這個念頭，繼續前行", "next": "__act11__"}
+      ]
+    },
+
+    "act10_siege": {
+      "type": "story",
+      "title": "第十章・最後防線",
+      "text": "距離最終目的地只差一道關卡——但那道關卡守衛森嚴，至少有二十名甲兵，還有一套複雜的警報機關。硬衝必然傷亡慘重，但繞道要多走半天，而你不確定還有多少時間。",
+      "choices": [
+        {"text": "正面強攻，以快制勝", "next": "act10_siege_fight"},
+        {"text": "尋找警報機關的弱點，悄悄拆除", "next": "act10_siege_stealth", "condition": {"stat": "survival", "min": 22}},
+        {"text": "製造聲東擊西的假像，趁亂通過", "next": "act10_siege_diversion", "condition": {"stat": "luck", "min": 28}}
+      ]
+    },
+
+    "act10_siege_fight": {
+      "type": "combat",
+      "combat_id": "cult_enforcer",
+      "next_win": "act10_siege_win",
+      "next_escape": "__act11__",
+      "history_flag": "broke_through_siege"
+    },
+
+    "act10_siege_win": {
+      "type": "event",
+      "title": "破陣而出",
+      "text": "你以一當十，殺出一條血路。守衛潰散，警報失靈。你穿過最後的防線，傷痕纍纍，卻昂然挺立。前方就是終點了。",
+      "event_type": "heal",
+      "heal_pct": 10,
+      "next": "__act11__"
+    },
+
+    "act10_siege_stealth": {
+      "type": "story",
+      "title": "無聲破局",
+      "text": "你仔細觀察了警報機關的結構，找到了幾個關鍵節點。在黑暗的掩護下，你悄無聲息地逐一拆除，然後從守衛的盲點滑了過去。這一段路走得安靜，也走得從容。",
+      "history_flag": "bypassed_siege_silently",
+      "choices": [
+        {"text": "繼續前行", "next": "__act11__"}
+      ]
+    },
+
+    "act10_siege_diversion": {
+      "type": "story",
+      "title": "聲東擊西",
+      "text": "你繞到防線後方，製造了幾個足以讓守衛分神的動靜——石頭滾落聲、錯誤的腳步聲、一個方向明確的假蹤跡。守衛一哄而去追查，你從另一側大搖大擺地通過了。運氣，有時候就是這麼用的。",
+      "history_flag": "tricked_siege_guards",
+      "choices": [
+        {"text": "繼續前行", "next": "__act11__"}
+      ]
+    },
+
+    "act11_meditation": {
+      "type": "story",
+      "title": "第十一章・最後的靜默",
+      "text": "決戰在即。你找到一個安靜的角落，坐了下來。這一路走過來的每一張臉，每一句話，每一個選擇，一一浮現在眼前。你有一點時間，可以讓自己準備好。",
+      "choices": [
+        {"text": "靜心調息，讓傷勢稍加復原", "next": "act11_meditation_heal"},
+        {"text": "回想所有的線索，做出最後的判斷", "next": "act11_meditation_focus"},
+        {"text": "打開牌庫，重新審視自己的每一張牌", "next": "act11_meditation_deck"}
+      ]
+    },
+
+    "act11_meditation_heal": {
+      "type": "event",
+      "title": "最後的調息",
+      "text": "你閉上眼睛，均勻地呼吸。身體的傷痛慢慢退去，心中的雜念一一平息。等你睜開眼，世界清晰了許多。",
+      "event_type": "heal",
+      "heal_pct": 20,
+      "next": "__act12__"
+    },
+
+    "act11_meditation_focus": {
+      "type": "story",
+      "title": "洞悉全局",
+      "text": "你把這一路收集的所有線索在腦中重新梳理一遍。敵人的習慣、弱點、動機……你心中漸漸有了一個清晰的輪廓。無論他是誰，無論他用何種手段，你已知道如何應對。",
+      "history_flag": "final_deduction",
+      "choices": [
+        {"text": "帶著這份清明，踏向最後的戰場", "next": "__act12__"}
+      ]
+    },
+
+    "act11_meditation_deck": {
+      "type": "event",
+      "title": "最後的選擇",
+      "text": "你攤開所有的能力，重新審視自己走到這裡所積累的一切。在最後的時刻，你選擇加強自己的某一方面——這是你對自己的最後一個承諾。",
+      "event_type": "card_reward",
+      "pick_from": 3,
+      "next": "__act12__"
+    },
+
+    "act11_farewell": {
+      "type": "story",
+      "title": "第十一章・道別",
+      "text": "出人意料地，在這最後的關口，你遇見了一個熟悉的身影——或是一個你在旅途中救過的人，或是一個曾幫助過你的陌生人，或是一個你早已以為再難相見的人。他們就站在那裡，沉默地看著你。",
+      "class_text": {
+        "beggar":    "是那個被你救下的旅人，他的傷已全好了，臉色也好了很多。「我知道你要去做什麼，」他說，「我只是想讓你知道，有人記得你做的事。」他遞給你一個布包，裡面是他剩下的一切。",
+        "courtesan": "是一個昔日同行的姐妹，眼神裡是你從未見過的平靜。「你找到你的答案了嗎？」她問。你想了想，點點頭。她微微笑了，什麼都沒說，只把她隨身帶著的一件舊物塞給你，轉身走了。",
+        "constable": "是你的一個老同僚，年紀大了，走路有些慢。「聽說你辦的這個案子，」他說，「不容易。你小子，從來都不走容易的路。」他拍了拍你的肩膀，力道比你想象中要重得多。",
+        "taoist":    "是師父，不知何時下山的，就那樣站在路旁。你們對視片刻，他什麼都沒說，只是微微點頭。然後從袖中取出那枚你兒時見過、卻從未觸碰過的玉符，放在你手中。「去吧。」就這兩個字。"
+      },
+      "choices": [
+        {"text": "與他們道別，踏向最後的路", "next": "act11_farewell_gift"}
+      ]
+    },
+
+    "act11_farewell_gift": {
+      "type": "event",
+      "title": "臨別饋贈",
+      "text": "他們給你的，不只是一件物品，而是一份心意。那份心意，比任何武器都沉。你收好他們的饋贈，深深地看了他們一眼，然後轉身，邁向前方。",
+      "event_type": "heal",
+      "heal_pct": 25,
+      "next": "__act12__"
+    },
+
+    "act11_gate": {
+      "type": "story",
+      "title": "第十一章・最後的門",
+      "text": "那扇門就在眼前。黑色的鐵門，高達兩丈，上面刻著複雜的紋路，散發著一股壓迫感。你知道，門後就是終點——以及那個等了你很久的人。",
+      "choices": [
+        {"text": "深吸一口氣，推開那扇門", "next": "__act12__"},
+        {"text": "在門前稍作準備，調整狀態", "next": "act11_gate_prepare"},
+        {"text": "仔細觀察門上的紋路，尋找規律", "next": "act11_gate_examine", "condition": {"stat": "spirit", "min": 25}}
+      ]
+    },
+
+    "act11_gate_prepare": {
+      "type": "event",
+      "title": "萬全準備",
+      "text": "你在門前整理了一遍裝束，調整了呼吸，回想了每一個可能有用的東西。然後，你感覺到自己比剛才更完整了一些。",
+      "event_type": "heal",
+      "heal_pct": 10,
+      "next": "__act12__"
+    },
+
+    "act11_gate_examine": {
+      "type": "story",
+      "title": "門上的秘密",
+      "text": "那些紋路……是一套陣法，也是一段警示。你細細辨認，逐漸讀出了其中的含義：這扇門曾是用來封印某種東西的，後來被那個人奪去，改造成了他的最後防線。\n但陣法的縫隙，你已找到。這將在最後的決戰中給你帶來一個小小的優勢。",
+      "history_flag": "decoded_gate_array",
+      "choices": [
+        {"text": "帶著這個秘密，推開那扇門", "next": "__act12__"}
+      ]
+    },
+
+    "act12_confrontation": {
+      "type": "story",
+      "title": "第十二章・命運終局",
+      "text": "你站在最後的戰場入口，風聲呼嘯。對面的黑暗中，緩緩走出一道身影。\n\n他就是你一路追尋的那個人——謀算者、刺客、血巫，或是邪術師——此刻站在你面前，他比任何傳說都要真實。\n\n「你比我預想的走得更遠。」他說，聲音平靜，卻帶著某種重量。\n\n這是最後一戰。",
+      "choices": [
+        {"text": "沉默以對，拔劍", "next": "act12_final_boss"},
+        {"text": "問他為何要這樣做", "next": "act12_last_words"}
+      ]
+    },
+
+    "act12_last_words": {
+      "type": "story",
+      "title": "最後的問",
+      "text": "他沉默片刻，然後說：「每個人都在浮世中尋找自己的答案。我的答案，就是這個。」\n\n他抬起頭，眼神中有什麼難以言說的東西——悔恨，或是釋然，或是你說不清楚的某種情感。然後他舉起手，擺出戰鬥的姿勢：「你的答案，就讓你的拳頭來說吧。」",
+      "choices": [
+        {"text": "接受他的回答，決戰", "next": "act12_final_boss"},
+        {"text": "告訴他，還有另一條路", "next": "act12_mercy_attempt", "condition": {"class": ["courtesan", "taoist"]}}
+      ]
+    },
+
+    "act12_mercy_attempt": {
+      "type": "story",
+      "title": "最後的慈悲",
+      "text": "你說出了你想說的話。他站在那裡，聽完了你的每一個字。\n長久的沉默。\n最後，他慢慢搖了搖頭：「……你是第一個，對我說這種話的人。」他閉上眼睛，似乎在想什麼，然後再度睜眼，「但有些事，不是說說就能放下的。」\n他還是舉起了手——卻沒有你預想中那麼快出手。也許，那一刻，他在猶豫。",
+      "history_flag": "attempted_mercy",
+      "choices": [
+        {"text": "既然如此，決一勝負", "next": "act12_final_boss"}
+      ]
+    },
+
+    "act12_final_boss": {
+      "type": "combat",
+      "combat_id": "__final_boss__",
+      "next_win": "__ending__",
+      "next_escape": "ending_escape",
+      "history_flag": "fought_final_boss"
+    },
+
+    "ending_glory":            {"type": "ending", "title": "名揚天下"},
+    "ending_immortal":         {"type": "ending", "title": "羽化登仙"},
+    "ending_survivor":         {"type": "ending", "title": "功成身退"},
+    "ending_sacrifice":        {"type": "ending", "title": "英雄犧牲"},
+    "ending_escape":           {"type": "ending", "title": "浪跡天涯"},
+    "ending_underdog":         {"type": "ending", "title": "絕地翻盤"},
+    "ending_demon_slayer":     {"type": "ending", "title": "斬邪除魔"},
+    "ending_shadow_master":    {"type": "ending", "title": "幕後玄機"},
+    "ending_iron_badge":       {"type": "ending", "title": "鐵面捕快"},
+    "ending_fortune_reversed": {"type": "ending", "title": "命運顛覆"},
+    "ending_karma_circle":     {"type": "ending", "title": "因果輪迴"}
 
   }
 }

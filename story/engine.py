@@ -3,8 +3,9 @@ import random
 import time
 
 from combat import Battle, BattleOutcome, build_enemy
-from combat.card import build_card, ADVANCED_CARD_POOL
+from combat.card import build_card, ADVANCED_CARD_POOL, CLASS_EVENT_POOL
 from combat.deck import Deck
+from combat.enemy import BOSS_POOL
 from .graph import StoryGraph
 from .node import StoryNode
 from .endings import ENDINGS, determine_ending
@@ -69,6 +70,7 @@ class StoryEngine:
         self.deck = Deck(character.deck_ids)
         self.history: list[str] = []
         self._battle_count = 0
+        self.boss_id = random.choice(BOSS_POOL)
 
     def run(self) -> None:
         self._go("start")
@@ -82,23 +84,19 @@ class StoryEngine:
             node_id = self._process(node)
 
     def _resolve(self, node_id: str) -> str:
-        if node_id == "__act1__":
-            chosen = self.graph.pick_act("act1")
-            self.history.append(f"act1:{chosen}")
-            return chosen
-        if node_id == "__act2__":
-            chosen = self.graph.pick_act("act2")
-            self.history.append(f"act2:{chosen}")
-            return chosen
-        if node_id == "__act3__":
-            chosen = self.graph.pick_act("act3")
-            self.history.append(f"act3:{chosen}")
-            return chosen
+        for act in ("act1", "act2", "act3", "act4", "act5", "act6",
+                    "act7", "act8", "act9", "act10", "act11", "act12"):
+            if node_id == f"__{act}__":
+                chosen = self.graph.pick_act(act)
+                self.history.append(f"{act}:{chosen}")
+                return chosen
         if node_id == "__ending__":
             ending_id = determine_ending(self.character, self.history)
             return ending_id
         if node_id == "__sacrifice__":
             return "ending_sacrifice"
+        if node_id == "__final_boss__":
+            return "act12_final_boss"
         return node_id
 
     def _process(self, node: StoryNode) -> str | None:
@@ -143,10 +141,52 @@ class StoryEngine:
             elif cond.get("stat"):
                 hint = f"（需{cond['stat']}≥{cond['min']}）"
             _p(f"  [{i}] {choice.text}{hint}")
+        _p("  [v] 查看屬性   [d] 查看牌庫")
         _div()
 
         while True:
-            raw = input("  選擇：").strip()
+            raw = input("  選擇：").strip().lower()
+            if raw == "v":
+                _clear()
+                _p(self.character.detail_display())
+                _wait()
+                _banner(node.title)
+                _typewrite(f"\n  {text.replace(chr(10), chr(10) + '  ')}\n")
+                _div()
+                for i, choice in enumerate(available, 1):
+                    cond = choice.condition
+                    hint = ""
+                    if cond.get("class"):
+                        hint = f"（{self.character.name}專屬）"
+                    elif cond.get("stat"):
+                        hint = f"（需{cond['stat']}≥{cond['min']}）"
+                    _p(f"  [{i}] {choice.text}{hint}")
+                _p("  [v] 查看屬性   [d] 查看牌庫")
+                _div()
+                continue
+            if raw == "d":
+                _clear()
+                _div("═")
+                _p(f"  ◆ 牌庫（共 {len(self.deck.all_cards)} 張）")
+                _div()
+                for card in self.deck.all_cards:
+                    _p(f"  ・{card.name}（{card.cost}能）── {card.description}")
+                _div("═")
+                _wait()
+                _banner(node.title)
+                _typewrite(f"\n  {text.replace(chr(10), chr(10) + '  ')}\n")
+                _div()
+                for i, choice in enumerate(available, 1):
+                    cond = choice.condition
+                    hint = ""
+                    if cond.get("class"):
+                        hint = f"（{self.character.name}專屬）"
+                    elif cond.get("stat"):
+                        hint = f"（需{cond['stat']}≥{cond['min']}）"
+                    _p(f"  [{i}] {choice.text}{hint}")
+                _p("  [v] 查看屬性   [d] 查看牌庫")
+                _div()
+                continue
             if raw.isdigit() and 1 <= int(raw) <= len(available):
                 chosen = available[int(raw) - 1]
                 if chosen.next == "ending_escape":
@@ -158,7 +198,8 @@ class StoryEngine:
 
     def _handle_combat(self, node: StoryNode) -> str:
         self._battle_count += 1
-        enemy = build_enemy(node.combat_id, self.difficulty_cfg)
+        combat_id = self.boss_id if node.combat_id == "__final_boss__" else node.combat_id
+        enemy = build_enemy(combat_id, self.difficulty_cfg)
 
         battle = Battle(
             self.character, enemy,
@@ -204,7 +245,8 @@ class StoryEngine:
                 if not self.character.is_alive():
                     return "__sacrifice__"
 
-            pool = node.card_pool if node.card_pool else ADVANCED_CARD_POOL
+            class_pool = CLASS_EVENT_POOL.get(self.character.char_key, ADVANCED_CARD_POOL)
+            pool = class_pool
             sample = random.sample(pool, min(node.pick_from, len(pool)))
             cards = [build_card(cid) for cid in sample]
 
@@ -224,7 +266,7 @@ class StoryEngine:
                     break
                 _p("  請輸入有效的數字。")
 
-        return self._resolve(node.next or "__act2__")
+        return self._resolve(node.next or "__act7__")
 
     # ── 結局節點 ──────────────────────────────────────────────────
 
@@ -253,13 +295,13 @@ class StoryEngine:
         c = self.character
         hp_ratio = c.current_hp / c.stats["hp"]
         hp_pct = int(hp_ratio * 100)
-        _p(f"  角色：{c.name}·{c.title}")
+        _p(f"  旅者：{c.traveler_name}  【{c.name}·{c.title}】")
         _p(f"  最終生命：{c.current_hp}/{c.stats['hp']}（{hp_pct}%）")
         _p(f"  歷經戰鬥：{self._battle_count} 場")
         _p(f"  牌庫張數：{len(self.deck.all_cards)} 張")
         cards_str = "、".join(
-            c.name for c in self.deck.all_cards
-            if c.id not in ("strike", "dodge", "block")
+            card.name for card in self.deck.all_cards
+            if card.id not in ("strike", "dodge", "block")
         )
         if cards_str:
             _p(f"  取得進階牌：{cards_str}")
